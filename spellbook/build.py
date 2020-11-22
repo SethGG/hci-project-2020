@@ -1,7 +1,8 @@
 import requests
 import re
 import pandas as pd
-from sqlalchemy import create_engine
+from db import engine
+from models import Base
 
 headers = {
     'authority': 'pf2.easytool.es',
@@ -29,9 +30,11 @@ data = {
 
 response = requests.post('https://pf2.easytool.es/spellbook/table.php', headers=headers, data=data)
 response.encoding = 'utf-8'
+fix_columns = re.compile(r'(Traditions|School)\*')
 fix_actions = re.compile(
     r'<i class="pf2 (?:Reaction|action\d)" data-toggle="tooltip" title="(Reaction|Single Action|Two-Action Activity|Three-Action Activity)"></i>')
-fixed_table = fix_actions.sub(r'\1', response.text)
-df = pd.read_html(fixed_table, index_col=1)[0].dropna(how='all', axis='columns')
-engine = create_engine('sqlite:///spellbook.db', echo=False)
-df.to_sql('spells', con=engine, if_exists='replace')
+fixed_table = fix_actions.sub(r'\1', fix_columns.sub(r'\1', response.text))
+df = pd.read_html(fixed_table)[0].dropna(how='all', axis='columns')
+Base.metadata.drop_all(engine)
+Base.metadata.create_all(engine)
+df.to_sql('spells', con=engine, index=False, if_exists='append')
