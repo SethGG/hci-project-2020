@@ -28,13 +28,28 @@ data = {
     'cantripLvl': '1'
 }
 
+# Request full spell list from pf2.easytools.es
 response = requests.post('https://pf2.easytool.es/spellbook/table.php', headers=headers, data=data)
 response.encoding = 'utf-8'
-fix_columns = re.compile(r'(Traditions|School)\*')
+
+# Replace the missing actions icons with it's description
 fix_actions = re.compile(
     r'<i class="pf2 (?:Reaction|action\d)" data-toggle="tooltip" title="(Reaction|Single Action|Two-Action Activity|Three-Action Activity)"></i>')
-fixed_table = fix_actions.sub(r'\1', fix_columns.sub(r'\1', response.text))
+fixed_table = fix_actions.sub(r'\1', response.text)
+
+# Generate a list of the spell ids
+find_id = re.compile(r"<input type='hidden' class='id' value='(\d+)'>")
+ids = find_id.findall(fixed_table)
+
+# Generate dataframe from html table
 df = pd.read_html(fixed_table)[0].dropna(how='all', axis='columns')
+df.rename(columns={'Traditions*': 'Traditions', 'School*': 'School'}, inplace=True)
+df.insert(0, 'id', ids)
+df.set_index('id', inplace=True)
+
+# Drop and rebuild database
 Base.metadata.drop_all(engine)
 Base.metadata.create_all(engine)
-df.to_sql('spells', con=engine, index=False, if_exists='append')
+
+# Popupate database from dataframe
+df.to_sql('spells', con=engine, if_exists='append')
