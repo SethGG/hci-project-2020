@@ -1,0 +1,23 @@
+<html>
+
+<head>
+  {% if title %}
+  <title>{{ title }} - microblog</title>
+  {% else %}
+  <title>microblog</title>
+  {% endif %}
+</head>
+
+{% block style %}{% endblock %}
+
+<body>
+  <div>
+    Microblog:
+    <a href="{{ url_for('routes.root') }}">Home</a>
+    <a href="{{ url_for('routes.login') }}">Login</a>
+  </div>
+  <hr>
+  {% block content %}{% endblock %}
+</body>
+
+</html>
