@@ -18,58 +18,60 @@
 {% block content %}
 <h1>Spellbook</h1>
 <form action="" method="post" novalidate>
+  {{ form.hidden_tag() }}
   <div class=row>
     <div class=filter>
       {{ form.level.label }}<br>
-      {{ form.level(size=5, style='width:100%') }}<br>
+      {{ form.level(size=5, style='width:100%') }}
     </div>
     <div class=filter>
       {{ form.traditions.label }}<br>
-      {{ form.traditions(size=5, style='width:100%') }}<br>
+      {{ form.traditions(size=5, style='width:100%') }}
     </div>
     <div class=filter>
       {{ form.actions.label }}<br>
-      {{ form.actions(size=5, style='width:100%') }}<br>
+      {{ form.actions(size=5, style='width:100%') }}
     </div>
     <div class=filter>
       {{ form.components.label }}<br>
-      {{ form.components(size=5, style='width:100%') }}<br>
+      {{ form.components(size=5, style='width:100%') }}
     </div>
     <div class=filter>
       {{ form.save.label }}<br>
-      {{ form.save(size=5, style='width:100%') }}<br>
+      {{ form.save(size=5, style='width:100%') }}
     </div>
     <div class=filter>
       {{ form.school.label }}<br>
-      {{ form.school(size=5, style='width:100%') }}<br>
+      {{ form.school(size=5, style='width:100%') }}
     </div>
     <div class=filter>
       {{ form.targets.label }}<br>
-      {{ form.targets(size=5, style='width:100%') }}<br>
+      {{ form.targets(size=5, style='width:100%') }}
     </div>
     <div class=filter>
       {{ form.rarity.label }}<br>
-      {{ form.rarity(size=5, style='width:100%') }}<br>
+      {{ form.rarity(size=5, style='width:100%') }}
     </div>
     <div class=filter>
       {{ form.traits.label }}<br>
-      {{ form.traits(size=5, style='width:100%') }}<br>
+      {{ form.traits(size=5, style='width:100%') }}
     </div>
   </div>
   <div class=row>
     <div class=filter>
       {{ form.name.label }}<br>
-      {{ form.name(size=32) }}<br>
+      {{ form.name(size=32) }}
     </div>
     <div class=filter>
       <br>
-      {{ form.submit(size=5, style='width:100%') }}<br>
+      {{ form.submit(size=5, style='width:100%') }}
+    </div>
+    <div class="filter">
+      <br>
+      <input id="reset" name="reset" size="5" style="width:100%" type="reset" value="Reset">
     </div>
   </div>
 </form>
-
 <hr>
-
 {{ table }}
-
 {% endblock %}
