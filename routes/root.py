@@ -1,5 +1,5 @@
 from routes import routes
-from flask import render_template, flash, redirect, url_for
+from flask import render_template, flash, redirect, url_for, request
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, SelectMultipleField
 from wtforms.validators import DataRequired
@@ -28,14 +28,14 @@ def login():
 
 
 class SpellbookForm(FlaskForm):
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         def custom_sort(x):
             try:
                 return [int(x[0]) + 122]
             except ValueError:
                 return [ord(y) for y in x[0]]
 
-        super().__init__()
+        super().__init__(*args, **kwargs)
         self.db_match = [(f[1], c[1]) for f in vars(self).items()
                          for c in vars(Spell).items() if f[0] == c[0] and '_' not in f[0]]
         for field, column in self.db_match:
@@ -71,9 +71,10 @@ class SpellTable(Table):
 
 @routes.route('/spellbook', methods=['GET', 'POST'])
 def spellbook():
-    form = SpellbookForm()
+    form = SpellbookForm(request.args, csrf_enabled=False)
     total_query = Spell.query
-    if form.validate_on_submit():
+    if form.validate():
+        print('yeet')
         for field, column in form.db_match:
             if field.data:
                 build_query = Spell.query.filter(False)
@@ -85,4 +86,5 @@ def spellbook():
                 total_query = build_query
 
     table = SpellTable(total_query.all(), border=True)
+    print(form.errors)
     return render_template('spellbook.html', title='Spellbook', form=form, table=table)
