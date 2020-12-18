@@ -1,25 +1,50 @@
 <!DOCTYPE html>
-<html>
+{% from 'bootstrap/nav.html' import render_nav_item %}
+<html lang="en">
 
 <head>
+  {% block head %}
+  <meta charset="utf-8">
+
+  {% block styles %}
+  {{ bootstrap.load_css() }}
+  {% endblock %}
+
   {% if title %}
   <title>{{ title }} - Unnamed PF2 Spellcaster Manager</title>
   {% else %}
   <title>Unnamed PF2 Spellcaster Manager</title>
   {% endif %}
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+  {% endblock %}
 </head>
 
 {% block style %}{% endblock %}
 
 <body>
-  <div>
-    Unnamed PF2 Spellcaster Manager:
-    <a href="{{ url_for('routes.root') }}">Home</a>
-    <a href="{{ url_for('routes.login') }}">Login</a>
-  </div>
-  <hr>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">Unnamed PF2 Spellcaster Manager</a>
+    <div class="navbar-nav mr-auto">
+      {{ render_nav_item('.root', 'Home') }}
+      {{ render_nav_item('.login', 'Login') }}
+    </div>
+  </nav>
+
+  {% with messages = get_flashed_messages() %}
+  {% if messages %}
+  <ul>
+    {% for message in messages %}
+    <li>{{ message }}</li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+  {% endwith %}
+
   {% block content %}{% endblock %}
+
+  {% block scripts %}
+  {{ bootstrap.load_js() }}
+  {% endblock %}
 </body>
 
 </html>

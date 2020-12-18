@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+{% from 'bootstrap/form.html' import render_form %}
+
+{% block content %}
+<h1>Sign In</h1>
+{{ render_form(form, action='/login') }}
+<h1>Register</h1>
+{{ render_form(form2, action='/register') }}
+{% endblock %}

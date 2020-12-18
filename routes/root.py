@@ -1,10 +1,11 @@
 from routes import routes
-from flask import render_template, flash, redirect, url_for, request
+from database import db
+from database.user_data import User
+from flask import render_template, flash, redirect, url_for, session
+from flask_login import current_user, login_user, logout_user
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, SelectMultipleField
+from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import DataRequired
-from database.spellbook import Spell
-from flask_table import Table, Col
 
 
 class LoginForm(FlaskForm):
@@ -15,76 +16,56 @@ class LoginForm(FlaskForm):
 
 @routes.route('/')
 def root():
-    return 'Home Page'
-
-
-@routes.route('/login', methods=['GET', 'POST'])
-def login():
+    session['active page'] = '.root'
+    if current_user.is_authenticated:
+        return redirect(url_for('.user', username=current_user.username))
     form = LoginForm()
-    if form.validate_on_submit():
-        flash('Login requested for user {}'.format(form.username.data))
-        return redirect(url_for('routes.root'))
-    return render_template('login.html', title='Sign In', form=form)
+    form2 = LoginForm()
+    return render_template('root.html', title='Home Page', form=form, form2=form2)
 
 
-class SpellbookForm(FlaskForm):
-    def __init__(self, *args, **kwargs):
-        def custom_sort(x):
-            try:
-                return [int(x[0]) + 122]
-            except ValueError:
-                return [ord(y) for y in x[0]]
-
-        super().__init__(*args, **kwargs)
-        self.db_match = [(f[1], c[1]) for f in vars(self).items()
-                         for c in vars(Spell).items() if f[0] == c[0] and '_' not in f[0]]
-        for field, column in self.db_match:
-            field.choices = {(x[0], x[0]) for x in Spell.query.with_entities(
-                column).distinct().all()}
-            field.choices = sorted(field.choices, key=custom_sort)
-
-    level = SelectMultipleField('Level')
-    traditions = SelectMultipleField('Traditions')
-    actions = SelectMultipleField('Actions')
-    components = SelectMultipleField('Components')
-    save = SelectMultipleField('Save')
-    school = SelectMultipleField('School')
-    targets = SelectMultipleField('Targets')
-    rarity = SelectMultipleField('Rarity')
-    traits = SelectMultipleField('Traits')
-    name = StringField('Name')
-    submit = SubmitField('Filter')
+@routes.route('/user/<username>')
+def user(username):
+    session['active page'] = '.user'
+    if not current_user.is_authenticated:
+        return redirect(url_for('.root'))
+    elif current_user.username != username:
+        return redirect(url_for('.user', username=current_user.username))
+    return(current_user.username)
 
 
-class SpellTable(Table):
-    name = Col('Name')
-    level = Col('Level')
-    traditions = Col('Traditions')
-    actions = Col('Actions')
-    components = Col('Components')
-    save = Col('Save')
-    school = Col('School')
-    targets = Col('Targets')
-    rarity = Col('Rarity')
-    traits = Col('Traits')
+@routes.route('/register', methods=['POST'])
+def register():
+    if not current_user.is_authenticated:
+        form = LoginForm()
+        if form.validate_on_submit():
+            usernames = [x[0] for x in User.query.with_entities(User.username).all()]
+            if form.username.data in usernames:
+                flash('Username is already in use')
+                return redirect(url_for('.root'))
+            if form.username.data not in usernames:
+                db.session.add(User(username=form.username.data, password=form.password.data))
+                db.session.commit()
+                return login(form=form)
 
 
-@routes.route('/spellbook', methods=['GET', 'POST'])
-def spellbook():
-    form = SpellbookForm(request.args, csrf_enabled=False)
-    total_query = Spell.query
-    if form.validate():
-        print('yeet')
-        for field, column in form.db_match:
-            if field.data:
-                build_query = Spell.query.filter(False)
-                if isinstance(field.data, list):
-                    for selection in field.data:
-                        build_query = build_query.union(total_query.filter(column == selection))
-                if isinstance(field.data, str):
-                    build_query = total_query.filter(column.contains(field.data))
-                total_query = build_query
+@routes.route('/login', methods=['POST'])
+def login(form=None):
+    if not current_user.is_authenticated:
+        if not form:
+            form = LoginForm()
+        if form.validate_on_submit():
+            user = User.query.get(form.username.data)
+            if user is None or user.password != form.password.data:
+                flash('Invalid username or password')
+                return redirect(url_for(session['active page']))
+            login_user(user)
+            return redirect(url_for('.user', username=current_user.username))
+    return redirect(url_for(session['active page']))
 
-    table = SpellTable(total_query.all(), border=True)
-    print(form.errors)
-    return render_template('spellbook.html', title='Spellbook', form=form, table=table)
+
+@routes.route('/logout', methods=['POST'])
+def logout():
+    if current_user.is_authenticated:
+        logout_user()
+    return redirect(url_for(session['active page']))

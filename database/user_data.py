@@ -1,7 +1,13 @@
-from database import db
+from database import db, login
+from flask_login import UserMixin
 
 
-class User(db.Model):
+@login.user_loader
+def load_user(name):
+    return User.query.get(name)
+
+
+class User(UserMixin, db.Model):
     __bind_key__ = 'user_data'
     __tablename__ = "user"
 
@@ -9,6 +15,9 @@ class User(db.Model):
     password = db.Column(db.String(20), nullable=False)
 
     characters = db.relationship("Character")
+
+    def get_id(self):
+        return self.username
 
 
 class Character(db.Model):

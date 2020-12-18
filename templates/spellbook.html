@@ -1,78 +1,59 @@
 <!DOCTYPE html>
 {% extends "base.html" %}
-
-{% block style %}
-<style>
-  .row {
-    overflow: auto;
-  }
-
-  .filter {
-    float: left;
-    margin-left: 10px;
-    margin-bottom: 10px;
-    min-width: 80px;
-  }
-</style>
-{% endblock %}
+{% from 'bootstrap/form.html' import render_field, render_form_row %}
+{% from 'bootstrap/table.html' import render_table %}
 
 {% block content %}
-<h1>Spellbook</h1>
-<form action="" method="post" novalidate>
-  <div class="row">
-    <div class="filter">
-      {{ form.level.label }}<br>
-      {{ form.level(size=5, style='width:100%') }}
-    </div>
-    <div class="filter">
-      {{ form.traditions.label }}<br>
-      {{ form.traditions(size=5, style='width:100%') }}
-    </div>
-    <div class="filter">
-      {{ form.actions.label }}<br>
-      {{ form.actions(size=5, style='width:100%') }}
-    </div>
-    <div class="filter">
-      {{ form.components.label }}<br>
-      {{ form.components(size=5, style='width:100%') }}
-    </div>
-    <div class="filter">
-      {{ form.save.label }}<br>
-      {{ form.save(size=5, style='width:100%') }}
-    </div>
-    <div class="filter">
-      {{ form.school.label }}<br>
-      {{ form.school(size=5, style='width:100%') }}
-    </div>
-    <div class="filter">
-      {{ form.targets.label }}<br>
-      {{ form.targets(size=5, style='width:100%') }}
-    </div>
-    <div class="filter">
-      {{ form.rarity.label }}<br>
-      {{ form.rarity(size=5, style='width:100%') }}
-    </div>
-    <div class="filter">
-      {{ form.traits.label }}<br>
-      {{ form.traits(size=5, style='width:100%') }}
-    </div>
+<div class="card m-3">
+  <div class="card-header">
+    Filters
   </div>
-  <div class="row">
-    <div class="filter">
-      {{ form.name.label }}<br>
-      {{ form.name(size=32) }}
-    </div>
-    <div class="filter">
-      <br>
-      {{ form.submit(size=5, style='width:100%') }}
-    </div>
-    <div class="filter">
-      <br>
-      <input size="5" style="width:100%" type="reset" value="Reset">
-    </div>
+  <div class="card-body">
+    <form action="">
+      {{ render_form_row([form.level, form.traditions, form.actions, form.components, form.save, form.school, form.targets, form.rarity, form.traits]) }}
+      {{ render_form_row([form.name], col_class_default='col-5') }}
+      <div class="form-row">
+        <div class="col-0.5">
+          {{ render_field(form.submit) }}
+        </div>
+        <div class="col-0.5">
+          <input class="btn btn-secondary btn-md" id="reset" name="reset" type="reset" value="Reset">
+        </div>
+      </div>
+    </form>
   </div>
-</form>
-<hr>
-{{ table }}
+</div>
+<div class="card m-3">
+  <div class="card-header">
+    Spells
+  </div>
+  <div class="card-body">
+    {% for spell in table %}
+    <div class="row">
+      <div class="card">
+        <div class="card-body">
+          <div class="row">
+            <div class="col">
+              <h5 class="card-title">{{ spell.name }}</h5>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <h6 class="card-subtitle text-muted">{{ spell.traditions }}</h6>
+            </div>
+            <div class="col">
+              <h6 class="card-subtitle text-muted">{{ spell.school }}</h6>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
 <script type="text/javascript" src="{{ url_for('static', filename='scripts/spellbook.js') }}"></script>
 {% endblock %}
