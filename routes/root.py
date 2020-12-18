@@ -60,7 +60,6 @@ def login(form=None):
                 flash('Invalid username or password')
                 return redirect(url_for(session['active page']))
             login_user(user)
-            return redirect(url_for('.user', username=current_user.username))
     return redirect(url_for(session['active page']))
 
 

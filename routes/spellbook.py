@@ -1,8 +1,10 @@
 from routes import routes
 from flask import render_template, request, session
 from flask_wtf import FlaskForm
+from flask_login import current_user
 from wtforms import StringField, SubmitField, SelectMultipleField
 from database.spellbook import Spell
+from routes.root import LoginForm
 
 
 class SpellbookForm(FlaskForm):
@@ -53,4 +55,4 @@ def spellbook():
 
     table = total_query.all()
     print(form.errors)
-    return render_template('spellbook.html', title='Spellbook', form=form, table=table)
+    return render_template('spellbook.html', title='Spellbook', form=form, table=table, current_user=current_user, loginform=LoginForm())

@@ -9,7 +9,7 @@
     Filters
   </div>
   <div class="card-body">
-    <form action="">
+    <form id="filterform" action="">
       {{ render_form_row([form.level, form.traditions, form.actions, form.components, form.save, form.school, form.targets, form.rarity, form.traits]) }}
       {{ render_form_row([form.name], col_class_default='col-5') }}
       <div class="form-row">
@@ -30,19 +30,23 @@
   <div class="card-body">
     {% for spell in table %}
     <div class="row">
-      <div class="card">
+      <div class="card col">
         <div class="card-body">
-          <div class="row">
-            <div class="col">
-              <h5 class="card-title">{{ spell.name }}</h5>
-            </div>
+          <div class="row col">
+            <h5 class="card-title">{{ spell.name }}</h5>
           </div>
           <div class="row">
-            <div class="col">
-              <h6 class="card-subtitle text-muted">{{ spell.traditions }}</h6>
+            <div class="col-1">
+              <h6 class="card-subtitle text-muted">Traditions: {{ spell.traditions }}</h6>
             </div>
-            <div class="col">
-              <h6 class="card-subtitle text-muted">{{ spell.school }}</h6>
+            <div class="col-1">
+              <h6 class="card-subtitle text-muted">School: {{ spell.school }}</h6>
+            </div>
+            <div class="col-1">
+              <h6 class="card-subtitle text-muted">Actions: {{ spell.actions }}</h6>
+            </div>
+            <div class="col-1">
+              <h6 class="card-subtitle text-muted">Targets: {{ spell.targets }}</h6>
             </div>
           </div>
         </div>

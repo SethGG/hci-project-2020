@@ -1,4 +1,4 @@
-$("form").on("submit", function(event) {
+$("#filterform").on("submit", function(event) {
   event.preventDefault();
   var query = $(":input", this).filter(function(index, element) {
     return $(element).val() != '';
@@ -9,7 +9,7 @@ $("form").on("submit", function(event) {
   location.replace(location.pathname + query);
 });
 
-$("form").on("click", ":reset", function() {
+$("#filterform").on("click", ":reset", function() {
   $(":selected", this.parent).removeAttr("selected");
   $(":text", this.parent).attr("value", "");
 });
