@@ -1,7 +1,7 @@
 from database import db
-from database.user_data import User
+from database.user_data import User, Character
 from database.spellbook import Spell
-from forms import LoginForm, SpellbookForm
+from forms import LoginForm, SpellbookForm, PrepareForm
 from flask import Blueprint, render_template, redirect, url_for, request
 from flask_login import current_user, login_user, logout_user
 from flask_bootstrap import Bootstrap
@@ -9,21 +9,19 @@ from flask_bootstrap import Bootstrap
 routes = Blueprint('routes', __name__)
 bootstrap = Bootstrap()
 
+
 #########
 # Pages #
 #########
 
-
-@routes.route('/')
+@routes.route('/', methods=['GET'])
 def root():
     if current_user.is_authenticated:
         return redirect(url_for('.user', username=current_user.username))
-    form = LoginForm()
-    form2 = LoginForm()
-    return render_template('root.html', title='Home Page', form=form, form2=form2)
+    return render_template('root.html', title='Home Page', loginform=LoginForm())
 
 
-@routes.route('/user/<username>')
+@routes.route('/user/<username>', methods=['GET'])
 def user(username):
     if not current_user.is_authenticated:
         return redirect(url_for('.root'))
@@ -32,12 +30,12 @@ def user(username):
     return(current_user.username)
 
 
-@routes.route('/spellbook')
+@routes.route('/spellbook', methods=['GET'])
 def spellbook():
-    form = SpellbookForm(request.args, csrf_enabled=False)
+    filterform = SpellbookForm(request.args, csrf_enabled=False)
     total_query = Spell.query
-    if form.validate():
-        for field, column in form.db_match:
+    if filterform.validate():
+        for field, column in filterform.db_match:
             if field.data:
                 build_query = Spell.query.filter(False)
                 if isinstance(field.data, list):
@@ -54,9 +52,12 @@ def spellbook():
             return [ord(y) for y in x.level] + [ord(y) for y in x.name]
     table = sorted(total_query.all(), key=custom_sort)
 
-    print(type(table))
-    return render_template('spellbook.html', title='Spellbook', filterform=form, table=table,
-                           current_user=current_user, loginform=LoginForm())
+    if current_user.is_authenticated:
+        return render_template('spellbook.html', title='Spellbook', filterform=filterform,
+                               table=table, prepareform=PrepareForm(current_user))
+    else:
+        return render_template('spellbook.html', title='Spellbook', filterform=filterform,
+                               table=table, loginform=LoginForm())
 
 
 #############
@@ -88,6 +89,8 @@ def register():
             if form.username.data not in usernames:
                 user = User(username=form.username.data, password=form.password.data)
                 db.session.add(user)
+                char = Character(name="Demo Character", owner=form.username.data)
+                db.session.add(char)
                 db.session.commit()
                 login_user(user)
                 return "Succesfully registered and logged in", 200
@@ -100,5 +103,20 @@ def logout():
     if current_user.is_authenticated:
         logout_user()
         return "Succesfully logged out", 200
+    else:
+        return "User not logged in", 400
+
+
+#################
+# Character API #
+#################
+
+@routes.route('/prepare', methods=['POST'])
+def prepare():
+    if current_user.is_authenticated:
+        form = PrepareForm(current_user)
+        if form.validate_on_submit():
+            return "Valid", 200
+        return form.errors, 400
     else:
         return "User not logged in", 400

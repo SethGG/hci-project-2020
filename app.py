@@ -12,4 +12,5 @@ app.register_blueprint(routes)
 app.app_context().push()
 
 if __name__ == '__main__':
+    db.create_all(bind="user_data")
     app.run(host='0.0.0.0', debug=True)

@@ -1,13 +1,12 @@
 <!DOCTYPE html>
 {% extends "base.html" %}
 {% from 'bootstrap/nav.html' import render_nav_item %}
-{% from 'bootstrap/form.html' import render_form %}
 
 {% block content %}
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <a class="navbar-brand w-100" href="#">PF2 Spellmaster</a>
   <div class="navbar-nav mx-auto">
-    {% if current_user.is_authenticated %}
+    {% if not loginform %}
     {{ render_nav_item('.user', 'Characters', username=current_user.username)}}
     {{ render_nav_item('.spellbook', 'Spellbook')}}
     <a class="nav-item nav-link" href="" id="logout" data-action="/logout">Logout</a>
@@ -22,32 +21,16 @@
   </div>
 </nav>
 
-{% if not current_user.is_authenticated %}
-<div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="loginModalLabel"></h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="alert alert-danger alert-dismissible">
-          <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-          <strong>Error! </strong><span></span>
-        </div>
-        {{ render_form(loginform, id="loginform") }}
-      </div>
-    </div>
-  </div>
-</div>
+{% if loginform %}
+{% include "login.html" %}
 {% endif %}
 {% endblock %}
 
-{% if not current_user.is_authenticated %}
 {% block scripts %}
 {{ super() }}
+{% if not loginform %}
 <script type="text/javascript" src="{{ url_for('static', filename='scripts/navbar.js') }}"></script>
-{% endblock %}
+{% else %}
+<script type="text/javascript" src="{{ url_for('static', filename='scripts/login.js') }}"></script>
 {% endif %}
+{% endblock %}

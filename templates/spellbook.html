@@ -47,7 +47,9 @@
             <br>
             {{ spell.summary }}
           </div>
-          <button type="button" class="btn btn-info ml-auto">Prepare</button>
+          {% if prepareform %}
+          <button type="button" class="btn btn-info ml-auto" data-toggle="modal" data-target="#prepareModal" data-action="/prepare" data-title="Prepare {{ spell.name }}">Prepare</button>
+          {% endif %}
         </div>
         <div id="collapse{{ spell.id }}" class="collapse" aria-labelledby="heading{{ spell.id }}" data-parent="#accordion">
           <div class="card-body">
@@ -59,9 +61,45 @@
     </div>
   </div>
 </div>
+{% if prepareform %}
+<div class="modal fade" id="prepareModal" tabindex="-1" role="dialog" aria-labelledby="prepareModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="prepareModalLabel"></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form class="form" action="">
+        {{ prepareform.csrf_token }}
+        <div class="modal-body">
+          <div class="alert alert-danger alert-dismissible">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <strong>Error! </strong><span></span>
+          </div>
+          <div class="alert alert-success alert-dismissible">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <strong>Success! </strong><span></span>
+          </div>
+          {{ render_field(prepareform.character) }}
+          {{ render_form_row([prepareform.cantrip, prepareform.lv1, prepareform.lv2, prepareform.lv3, prepareform.lv4, prepareform.lv5, prepareform.lv6, prepareform.lv7, prepareform.lv8, prepareform.lv9, prepareform.lv10])}}
+        </div>
+        <div class="modal-footer">
+          {{ render_field(prepareform.submit) }}
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endif %}
 {% endblock %}
 
 {% block scripts %}
 {{ super() }}
 <script type="text/javascript" src="{{ url_for('static', filename='scripts/spellbook.js') }}"></script>
+{% if prepareform %}
+<script type="text/javascript" src="{{ url_for('static', filename='scripts/prepare.js') }}"></script>
+{% endif %}
 {% endblock %}

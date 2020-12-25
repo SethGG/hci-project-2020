@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, SelectMultipleField
+from wtforms import StringField, PasswordField, SubmitField, SelectMultipleField, SelectField
 from wtforms.validators import DataRequired
 from database.spellbook import Spell
 
@@ -37,3 +37,23 @@ class SpellbookForm(FlaskForm):
     traits = SelectMultipleField('Traits')
     name = StringField('Name')
     submit = SubmitField('Filter')
+
+
+class PrepareForm(FlaskForm):
+    def __init__(self, user, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.character.choices = [(x.cid, x.name) for x in user.characters]
+
+    character = SelectField('Character')
+    cantrip = SelectField('Cantrip', choices=list(range(5)))
+    lv1 = SelectField('Lv. 1', choices=list(range(5)))
+    lv2 = SelectField('Lv. 2', choices=list(range(5)))
+    lv3 = SelectField('Lv. 3', choices=list(range(5)))
+    lv4 = SelectField('Lv. 4', choices=list(range(5)))
+    lv5 = SelectField('Lv. 5', choices=list(range(5)))
+    lv6 = SelectField('Lv. 6', choices=list(range(5)))
+    lv7 = SelectField('Lv. 7', choices=list(range(5)))
+    lv8 = SelectField('Lv. 8', choices=list(range(5)))
+    lv9 = SelectField('Lv. 9', choices=list(range(5)))
+    lv10 = SelectField('Lv. 10', choices=list(range(5)))
+    submit = SubmitField('Confirm')

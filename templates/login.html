@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+{% from 'bootstrap/form.html' import render_field, render_form_row %}
+<div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="loginModalLabel"></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form class="form" action="">
+        {{ loginform.csrf_token }}
+        <div class="modal-body">
+          <div class="alert alert-danger alert-dismissible">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <strong>Error! </strong><span></span>
+          </div>
+          {{ render_field(loginform.username) }}
+          {{ render_field(loginform.password) }}
+        </div>
+        <div class="modal-footer">
+          {{ render_field(loginform.submit) }}
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

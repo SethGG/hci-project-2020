@@ -54,5 +54,5 @@ class Prepared(db.Model):
 
     pid = db.Column(db.Integer, primary_key=True)
     cid = db.Column(db.String(20), db.ForeignKey("character.cid"))
-    spell_name = db.Column(db.String(20))
+    sid = db.Column(db.Integer)
     spell_level = db.Column(db.Integer)
