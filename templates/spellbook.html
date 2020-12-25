@@ -33,7 +33,7 @@
       {% for spell in table %}
       <div class="card mb-2">
         <div class="card-header d-flex align-items-center" id="heading{{ spell.id }}">
-          <h2 class="mb-0" style="width: 100px">
+          <h2 class="mb-0" style="min-width: 100px">
             {% if spell.level == 'cantrip' %}
             <span class="badge badge-secondary w-100">{{ spell.level }}</span>
             {% else %}
