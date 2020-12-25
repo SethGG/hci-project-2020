@@ -2,7 +2,7 @@ from database import db
 from database.user_data import User
 from database.spellbook import Spell
 from forms import LoginForm, SpellbookForm
-from flask import Blueprint, render_template, flash, redirect, url_for, session, request
+from flask import Blueprint, render_template, redirect, url_for, request
 from flask_login import current_user, login_user, logout_user
 from flask_bootstrap import Bootstrap
 
@@ -47,7 +47,14 @@ def spellbook():
                     build_query = total_query.filter(column.contains(field.data))
                 total_query = build_query
 
-    table = total_query.all()
+    def custom_sort(x):
+        try:
+            return [int(x.level) + 122] + [ord(y) for y in x.name]
+        except ValueError:
+            return [ord(y) for y in x.level] + [ord(y) for y in x.name]
+    table = sorted(total_query.all(), key=custom_sort)
+
+    print(type(table))
     return render_template('spellbook.html', title='Spellbook', filterform=form, table=table,
                            current_user=current_user, loginform=LoginForm())
 

@@ -15,7 +15,7 @@
       {{ render_form_row([filterform.name], col_class_default='col-3') }}
       <div class="form-row">
         <div class="col-0.5">
-          {{ render_field(filterform.submit) }}
+          {{ render_field(filterform.submit, button_style='info') }}
         </div>
         <div class="col-0.5">
           <input class="btn btn-secondary btn-md" id="reset" name="reset" type="reset" value="Reset">
@@ -47,7 +47,7 @@
             <br>
             {{ spell.summary }}
           </div>
-          <button type="button" class="btn btn-primary ml-auto">Prepare</button>
+          <button type="button" class="btn btn-info ml-auto">Prepare</button>
         </div>
         <div id="collapse{{ spell.id }}" class="collapse" aria-labelledby="heading{{ spell.id }}" data-parent="#accordion">
           <div class="card-body">

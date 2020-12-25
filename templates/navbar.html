@@ -4,9 +4,9 @@
 {% from 'bootstrap/form.html' import render_form %}
 
 {% block content %}
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <a class="navbar-brand" href="#">PF2 Spellmaster</a>
-  <div class="navbar-nav mr-auto">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <a class="navbar-brand w-100" href="#">PF2 Spellmaster</a>
+  <div class="navbar-nav mx-auto">
     {% if current_user.is_authenticated %}
     {{ render_nav_item('.user', 'Characters', username=current_user.username)}}
     {{ render_nav_item('.spellbook', 'Spellbook')}}
@@ -17,6 +17,8 @@
     <a class="nav-item nav-link" href="" data-toggle="modal" data-target="#loginModal" data-action="/login" data-title="Login">Login</a>
     <a class="nav-item nav-link" href="" data-toggle="modal" data-target="#loginModal" data-action="/register" data-title="Register">Register</a>
     {% endif %}
+  </div>
+  <div class="w-100">
   </div>
 </nav>
 
