@@ -1,6 +1,6 @@
 $("#filterform").on("submit", function(event) {
   event.preventDefault();
-  var query = $(":input", this).filter(function(index, element) {
+  let query = $(":input", this).filter(function(index, element) {
     return $(element).val() != '';
   }).serialize();
   if (query) {

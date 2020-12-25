@@ -1,10 +1,13 @@
-from routes import routes
-from flask import render_template, request, session
 from flask_wtf import FlaskForm
-from flask_login import current_user
-from wtforms import StringField, SubmitField, SelectMultipleField
+from wtforms import StringField, PasswordField, SubmitField, SelectMultipleField
+from wtforms.validators import DataRequired
 from database.spellbook import Spell
-from routes.root import LoginForm
+
+
+class LoginForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired()])
+    password = PasswordField('Password', validators=[DataRequired()])
+    submit = SubmitField('Confirm')
 
 
 class SpellbookForm(FlaskForm):
@@ -34,25 +37,3 @@ class SpellbookForm(FlaskForm):
     traits = SelectMultipleField('Traits')
     name = StringField('Name')
     submit = SubmitField('Filter')
-
-
-@routes.route('/spellbook', methods=['GET', 'POST'])
-def spellbook():
-    session['active page'] = '.spellbook'
-    form = SpellbookForm(request.args, csrf_enabled=False)
-    total_query = Spell.query
-    if form.validate():
-        print('yeet')
-        for field, column in form.db_match:
-            if field.data:
-                build_query = Spell.query.filter(False)
-                if isinstance(field.data, list):
-                    for selection in field.data:
-                        build_query = build_query.union(total_query.filter(column == selection))
-                if isinstance(field.data, str):
-                    build_query = total_query.filter(column.contains(field.data))
-                total_query = build_query
-
-    table = total_query.all()
-    print(form.errors)
-    return render_template('spellbook.html', title='Spellbook', form=form, table=table, current_user=current_user, loginform=LoginForm())

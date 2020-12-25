@@ -1,20 +1,21 @@
 <!DOCTYPE html>
-{% extends "base.html" %}
+{% extends "navbar.html" %}
 {% from 'bootstrap/form.html' import render_field, render_form_row %}
 {% from 'bootstrap/table.html' import render_table %}
 
 {% block content %}
+{{ super() }}
 <div class="card m-3">
   <div class="card-header">
     Filters
   </div>
   <div class="card-body">
     <form id="filterform" action="">
-      {{ render_form_row([form.level, form.traditions, form.actions, form.components, form.save, form.school, form.targets, form.rarity, form.traits]) }}
-      {{ render_form_row([form.name], col_class_default='col-5') }}
+      {{ render_form_row([filterform.level, filterform.traditions, filterform.actions, filterform.components, filterform.save, filterform.school, filterform.targets, filterform.rarity, filterform.traits]) }}
+      {{ render_form_row([filterform.name], col_class_default='col-3') }}
       <div class="form-row">
         <div class="col-0.5">
-          {{ render_field(form.submit) }}
+          {{ render_field(filterform.submit) }}
         </div>
         <div class="col-0.5">
           <input class="btn btn-secondary btn-md" id="reset" name="reset" type="reset" value="Reset">
