@@ -29,31 +29,34 @@
     Spells
   </div>
   <div class="card-body">
-    {% for spell in table %}
-    <div class="row">
-      <div class="card col">
-        <div class="card-body">
-          <div class="row col">
-            <h5 class="card-title">{{ spell.name }}</h5>
+    <div id="accordion">
+      {% for spell in table %}
+      <div class="card mb-2">
+        <div class="card-header d-flex align-items-center" id="heading{{ spell.id }}">
+          <h2 class="mb-0" style="width: 100px">
+            {% if spell.level == 'cantrip' %}
+            <span class="badge badge-secondary w-100">{{ spell.level }}</span>
+            {% else %}
+            <span class="badge badge-secondary w-100">Lv. {{ spell.level }}</span>
+            {% endif %}
+          </h2>
+          <div class="mx-4">
+            <button class="btn btn-link btn-lg p-0" data-toggle="collapse" data-target="#collapse{{ spell.id }}" aria-expanded="true" aria-controls="collapse{{ spell.id }}">
+              {{ spell.name }}
+            </button>
+            <br>
+            {{ spell.summary }}
           </div>
-          <div class="row">
-            <div class="col-1">
-              <h6 class="card-subtitle text-muted">Traditions: {{ spell.traditions }}</h6>
-            </div>
-            <div class="col-1">
-              <h6 class="card-subtitle text-muted">School: {{ spell.school }}</h6>
-            </div>
-            <div class="col-1">
-              <h6 class="card-subtitle text-muted">Actions: {{ spell.actions }}</h6>
-            </div>
-            <div class="col-1">
-              <h6 class="card-subtitle text-muted">Targets: {{ spell.targets }}</h6>
-            </div>
+          <button type="button" class="btn btn-primary ml-auto">Prepare</button>
+        </div>
+        <div id="collapse{{ spell.id }}" class="collapse" aria-labelledby="heading{{ spell.id }}" data-parent="#accordion">
+          <div class="card-body">
+            Placeholder
           </div>
         </div>
       </div>
+      {% endfor %}
     </div>
-    {% endfor %}
   </div>
 </div>
 {% endblock %}
