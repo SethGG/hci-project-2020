@@ -142,8 +142,8 @@ def prepare():
                 if taken_slots + int(field.data) > max_slots:
                     return "You do not have enough spell slots", 400
 
-                prepare.extend([Prepared(cid=char.cid, sid=spell.id,
-                                         spell_slot_level=level)] * int(field.data))
+                for i in range(int(field.data)):
+                    prepare.append(Prepared(cid=char.cid, sid=spell.id, spell_slot_level=level))
             for p in prepare:
                 db.session.add(p)
                 db.session.commit()
