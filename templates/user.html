@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+{% extends "navbar.html" %}
+
+{% block content %}
+{{ super() }}
+This is the work in progress user page for {{ user.username }}.
+<br>
+Characters:
+<br>
+{% for c in user.characters %}
+<a href="{{ url_for('.character', username=user.username, cid=c.cid )}}">{{ c.name }}</a>
+<br>
+{% endfor %}
+
+{% endblock %}

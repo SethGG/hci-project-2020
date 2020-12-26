@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+{% extends "navbar.html" %}
+{% from 'bootstrap/table.html' import render_table %}
+
+{% block content %}
+{{ super() }}
+This is the work in progress character page for {{ char.name }}.
+<br>
+Stats:
+<br>
+{{ render_table([char]) }}
+<br>
+Spell Slots:
+<br>
+{{ render_table(char.prepared_spells)}}
+
+{% endblock %}

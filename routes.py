@@ -1,5 +1,5 @@
 from database import db
-from database.user_data import User, Character
+from database.user_data import User, Character, Prepared
 from database.spellbook import Spell
 from forms import LoginForm, SpellbookForm, PrepareForm
 from flask import Blueprint, render_template, redirect, url_for, request
@@ -27,7 +27,17 @@ def user(username):
         return redirect(url_for('.root'))
     elif current_user.username != username:
         return redirect(url_for('.user', username=current_user.username))
-    return(current_user.username)
+    return render_template('user.html', title='User Page', user=current_user)
+
+
+@routes.route('/user/<username>/<cid>', methods=['GET'])
+def character(username, cid):
+    if not current_user.is_authenticated:
+        return redirect(url_for('.root'))
+    if current_user.username != username or cid not in [str(x.cid) for x in current_user.characters]:
+        return redirect(url_for('.user', username=current_user.username))
+    char = Character.query.get(int(cid))
+    return render_template('character.html', title='Character Page', char=char)
 
 
 @routes.route('/spellbook', methods=['GET'])
@@ -118,6 +128,7 @@ def prepare():
         if form.validate_on_submit():
             spell = Spell.query.get(form.spell.data)
             char = Character.query.get(form.character.data)
+            prepare = []
             for level, field, column in form.db_match:
                 if spell.level == "cantrip" and level != "cantrip" and int(field.data) > 0:
                     return "You can only prepare cantrips in cantrip slots", 400
@@ -131,7 +142,12 @@ def prepare():
                 if taken_slots + int(field.data) > max_slots:
                     return "You do not have enough spell slots", 400
 
-            return "Valid", 200
+                prepare.extend([Prepared(cid=char.cid, sid=spell.id,
+                                         spell_slot_level=level)] * int(field.data))
+            for p in prepare:
+                db.session.add(p)
+                db.session.commit()
+            return "Succesfully prepred spells", 200
         return "Validation error", 400
     else:
         return "User not logged in", 400
