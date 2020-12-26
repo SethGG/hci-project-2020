@@ -116,7 +116,22 @@ def prepare():
     if current_user.is_authenticated:
         form = PrepareForm(current_user)
         if form.validate_on_submit():
+            spell = Spell.query.get(form.spell.data)
+            char = Character.query.get(form.character.data)
+            for level, field, column in form.db_match:
+                if spell.level == "cantrip" and level != "cantrip" and int(field.data) > 0:
+                    return "You can only prepare cantrips in cantrip slots", 400
+                if spell.level != "cantrip" and level != "cantrip" and int(spell.level) > int(level):
+                    return "You cannot prepare this spell in a slot lower than lv. %s" % spell.level, 400
+                if spell.level != "cantrip" and level == "cantrio" and field.data > 0:
+                    return "You cannot prepare leveled spells in cantrip slots", 400
+
+                max_slots = getattr(char, "spell_slots_%s" % level)
+                taken_slots = len([x for x in char.prepared_spells if x.spell_slot_level == level])
+                if taken_slots + int(field.data) > max_slots:
+                    return "You do not have enough spell slots", 400
+
             return "Valid", 200
-        return form.errors, 400
+        return "Validation error", 400
     else:
         return "User not logged in", 400

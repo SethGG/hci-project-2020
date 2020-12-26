@@ -33,7 +33,7 @@ class Character(db.Model):
     spell_dc = db.Column(db.Integer, default=0)
     cantrip_lvl = db.Column(db.Integer, default=0)
 
-    spell_slots_0 = db.Column(db.Integer, default=0)
+    spell_slots_cantrip = db.Column(db.Integer, default=0)
     spell_slots_1 = db.Column(db.Integer, default=0)
     spell_slots_2 = db.Column(db.Integer, default=0)
     spell_slots_3 = db.Column(db.Integer, default=0)
@@ -55,4 +55,4 @@ class Prepared(db.Model):
     pid = db.Column(db.Integer, primary_key=True)
     cid = db.Column(db.String(20), db.ForeignKey("character.cid"))
     sid = db.Column(db.Integer)
-    spell_level = db.Column(db.Integer)
+    spell_slot_level = db.Column(db.Integer)

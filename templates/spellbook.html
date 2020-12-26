@@ -48,7 +48,7 @@
             {{ spell.summary }}
           </div>
           {% if prepareform %}
-          <button type="button" class="btn btn-info ml-auto" data-toggle="modal" data-target="#prepareModal" data-action="/prepare" data-title="Prepare {{ spell.name }}">Prepare</button>
+          <button type="button" class="btn btn-info ml-auto" data-toggle="modal" data-target="#prepareModal" data-spell="{{ spell.id }}" data-action="/prepare" data-title="Prepare {{ spell.name }}">Prepare</button>
           {% endif %}
         </div>
         <div id="collapse{{ spell.id }}" class="collapse" aria-labelledby="heading{{ spell.id }}" data-parent="#accordion">
@@ -82,6 +82,7 @@
             <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
             <strong>Success! </strong><span></span>
           </div>
+          {{ render_field(prepareform.spell) }}
           {{ render_field(prepareform.character) }}
           {{ render_form_row([prepareform.cantrip, prepareform.lv1, prepareform.lv2, prepareform.lv3, prepareform.lv4, prepareform.lv5, prepareform.lv6, prepareform.lv7, prepareform.lv8, prepareform.lv9, prepareform.lv10])}}
         </div>

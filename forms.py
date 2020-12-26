@@ -1,7 +1,8 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, SelectMultipleField, SelectField
+from wtforms import StringField, PasswordField, SubmitField, SelectMultipleField, SelectField, IntegerField
 from wtforms.validators import DataRequired
 from database.spellbook import Spell
+from database.user_data import Character
 
 
 class LoginForm(FlaskForm):
@@ -43,8 +44,13 @@ class PrepareForm(FlaskForm):
     def __init__(self, user, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.character.choices = [(x.cid, x.name) for x in user.characters]
+        self.spell.choices = [x[0] for x in Spell.query.with_entities(Spell.id)]
+        self.db_match = [(f[0].lstrip("lv"), f[1], c[1]) for f in vars(self).items()
+                         for c in vars(Character).items()
+                         if f[0].lstrip("lv") == c[0].lstrip("spell_slots_") and '_' not in f[0]]
 
     character = SelectField('Character')
+    spell = IntegerField('Spell ID')
     cantrip = SelectField('Cantrip', choices=list(range(5)))
     lv1 = SelectField('Lv. 1', choices=list(range(5)))
     lv2 = SelectField('Lv. 2', choices=list(range(5)))
