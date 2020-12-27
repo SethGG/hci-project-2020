@@ -131,20 +131,24 @@ def prepare():
             char = Character.query.get(form.character.data)
             prepare = []
             for level, field, column in form.db_match:
-                if spell.level == "cantrip" and level != "cantrip" and int(field.data) > 0:
-                    return "You can only prepare cantrips in cantrip slots", 400
-                if spell.level != "cantrip" and level != "cantrip" and int(spell.level) > int(level):
-                    return "You cannot prepare this spell in a slot lower than lv. %s" % spell.level, 400
-                if spell.level != "cantrip" and level == "cantrio" and field.data > 0:
-                    return "You cannot prepare leveled spells in cantrip slots", 400
+                if field.data:
+                    if spell.level == "cantrip" and level != "cantrip" and int(field.data) > 0:
+                        return "You can only prepare cantrips in cantrip slots", 400
+                    if spell.level != "cantrip" and level != "cantrip" and int(spell.level) > int(level):
+                        return "You cannot prepare this spell in a slot lower than lv. %s" % spell.level, 400
+                    if spell.level != "cantrip" and level == "cantrip" and field.data > 0:
+                        return "You cannot prepare leveled spells in cantrip slots", 400
 
-                max_slots = getattr(char, "spell_slots_%s" % level)
-                taken_slots = len([x for x in char.prepared_spells if x.spell_slot_level == level])
-                if taken_slots + int(field.data) > max_slots:
-                    return "You do not have enough spell slots", 400
+                    max_slots = getattr(char, "spell_slots_%s" % level)
+                    taken_slots = len(
+                        [x for x in char.prepared_spells if x.spell_slot_level == level])
+                    if taken_slots + int(field.data) > max_slots:
+                        return "You do not have enough spell slots", 400
 
-                for i in range(int(field.data)):
-                    prepare.append(Prepared(cid=char.cid, sid=spell.id, spell_slot_level=level))
+                    for i in range(int(field.data)):
+                        prepare.append(Prepared(cid=char.cid, sid=spell.id, spell_slot_level=level))
+            if not prepare:
+                return "No spell slots selected", 400
             for p in prepare:
                 db.session.add(p)
                 db.session.commit()

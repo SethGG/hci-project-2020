@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, SelectMultipleField, SelectField, HiddenField
-from wtforms.validators import DataRequired
+from wtforms.validators import DataRequired, Optional
 from database.spellbook import Spell
 from database.user_data import Character
 
@@ -52,17 +52,17 @@ class PrepareForm(FlaskForm):
                          for c in vars(Character).items()
                          if f[0].lstrip("lv") == c[0].lstrip("spell_slots_") and '_' not in f[0]]
 
-    character = SelectField('Character')
-    spell = HiddenField('Spell ID')
-    cantrip = SelectField('Cantrip', choices=list(range(5)))
-    lv1 = SelectField('Lv. 1', choices=list(range(5)))
-    lv2 = SelectField('Lv. 2', choices=list(range(5)))
-    lv3 = SelectField('Lv. 3', choices=list(range(5)))
-    lv4 = SelectField('Lv. 4', choices=list(range(5)))
-    lv5 = SelectField('Lv. 5', choices=list(range(5)))
-    lv6 = SelectField('Lv. 6', choices=list(range(5)))
-    lv7 = SelectField('Lv. 7', choices=list(range(5)))
-    lv8 = SelectField('Lv. 8', choices=list(range(5)))
-    lv9 = SelectField('Lv. 9', choices=list(range(5)))
-    lv10 = SelectField('Lv. 10', choices=list(range(5)))
+    character = SelectField('Character', validators=[DataRequired()])
+    spell = HiddenField('Spell ID', validators=[DataRequired()])
+    cantrip = SelectField('Cantrip', choices=list(range(5)), validators=[Optional()])
+    lv1 = SelectField('Lv. 1', choices=list(range(5)), validators=[Optional()])
+    lv2 = SelectField('Lv. 2', choices=list(range(5)), validators=[Optional()])
+    lv3 = SelectField('Lv. 3', choices=list(range(5)), validators=[Optional()])
+    lv4 = SelectField('Lv. 4', choices=list(range(5)), validators=[Optional()])
+    lv5 = SelectField('Lv. 5', choices=list(range(5)), validators=[Optional()])
+    lv6 = SelectField('Lv. 6', choices=list(range(5)), validators=[Optional()])
+    lv7 = SelectField('Lv. 7', choices=list(range(5)), validators=[Optional()])
+    lv8 = SelectField('Lv. 8', choices=list(range(5)), validators=[Optional()])
+    lv9 = SelectField('Lv. 9', choices=list(range(5)), validators=[Optional()])
+    lv10 = SelectField('Lv. 10', choices=list(range(5)), validators=[Optional()])
     submit = SubmitField('Confirm')
