@@ -9,12 +9,12 @@
     {% if not loginform %}
     {{ render_nav_item('.user', 'Characters', username=current_user.username)}}
     {{ render_nav_item('.spellbook', 'Spellbook')}}
-    <a class="nav-item nav-link" href="" id="logout" data-action="/logout">Logout</a>
+    <a class="nav-item nav-link" href="javascript:;" id="logout" data-action="/logout">Logout</a>
     {% else %}
     {{ render_nav_item('.root', 'Home') }}
     {{ render_nav_item('.spellbook', 'Spellbook')}}
-    <a class="nav-item nav-link" href="" data-toggle="modal" data-target="#loginModal" data-action="/login" data-title="Login">Login</a>
-    <a class="nav-item nav-link" href="" data-toggle="modal" data-target="#loginModal" data-action="/register" data-title="Register">Register</a>
+    <a class="nav-item nav-link" href="javascript:;" data-toggle="modal" data-target="#loginModal" data-action="/login" data-title="Login">Login</a>
+    <a class="nav-item nav-link" href="javascript:;" data-toggle="modal" data-target="#loginModal" data-action="/register" data-title="Register">Register</a>
     {% endif %}
   </div>
   <div class="w-100">
