@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, SelectMultipleField, SelectField, IntegerField
+from wtforms import StringField, PasswordField, SubmitField, SelectMultipleField, SelectField, HiddenField
 from wtforms.validators import DataRequired
 from database.spellbook import Spell
 from database.user_data import Character
@@ -53,7 +53,7 @@ class PrepareForm(FlaskForm):
                          if f[0].lstrip("lv") == c[0].lstrip("spell_slots_") and '_' not in f[0]]
 
     character = SelectField('Character')
-    spell = IntegerField('Spell ID')
+    spell = HiddenField('Spell ID')
     cantrip = SelectField('Cantrip', choices=list(range(5)))
     lv1 = SelectField('Lv. 1', choices=list(range(5)))
     lv2 = SelectField('Lv. 2', choices=list(range(5)))
