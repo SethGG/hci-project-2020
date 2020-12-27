@@ -48,9 +48,8 @@ class PrepareForm(FlaskForm):
         super().__init__(*args, **kwargs)
         self.character.choices = [(x.cid, x.name) for x in user.characters]
         self.spell.choices = [x[0] for x in Spell.query.with_entities(Spell.id)]
-        self.db_match = [(f[0].lstrip("lv"), f[1], c[1]) for f in vars(self).items()
-                         for c in vars(Character).items()
-                         if f[0].lstrip("lv") == c[0].lstrip("spell_slots_") and '_' not in f[0]]
+        self.lv_match = [(f[0].lstrip("lv"), f[1]) for f in vars(self).items()
+                         if f[0] == 'cantrip' or 'lv' in f[0] and '_' not in f[0]]
 
     character = SelectField('Character', validators=[DataRequired()])
     spell = HiddenField('Spell ID', validators=[DataRequired()])
@@ -66,3 +65,11 @@ class PrepareForm(FlaskForm):
     lv9 = SelectField('Lv. 9', choices=list(range(5)), validators=[Optional()])
     lv10 = SelectField('Lv. 10', choices=list(range(5)), validators=[Optional()])
     submit = SubmitField('Confirm')
+
+
+class SlotsForm(FlaskForm):
+    def __init__(self, user, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.character.choices = [(x.cid, x.name) for x in user.characters]
+
+    character = SelectField('Character', validators=[DataRequired()])

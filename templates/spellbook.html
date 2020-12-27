@@ -1,80 +1,139 @@
 <!DOCTYPE html>
 {% extends "navbar.html" %}
-{% from 'bootstrap/form.html' import render_field, render_form_row %}
+{% from 'bootstrap/form.html' import render_form, render_field, render_form_row %}
 {% from 'bootstrap/table.html' import render_table %}
 
 {% block content %}
 {{ super() }}
-<div class="card m-3">
-  <div class="card-header">
-    Filters
-  </div>
-  <div class="card-body">
-    <form id="filterform" action="">
-      {{ render_form_row([filterform.level, filterform.traditions, filterform.actions, filterform.components, filterform.save, filterform.school, filterform.targets, filterform.rarity, filterform.traits]) }}
-      {{ render_form_row([filterform.name], col_class_default='col-3') }}
-      <div class="form-row">
-        <div class="col-0.5">
-          {{ render_field(filterform.submit, button_style='info') }}
+<div class="container-fluid">
+  <div class="row">
+    <div class="col p-0">
+      <div class="card mt-4 mx-4">
+        <div class="card-header">
+          Filters
         </div>
-        <div class="col-0.5">
-          <input class="btn btn-secondary btn-md" id="reset" name="reset" type="reset" value="Reset">
-        </div>
-      </div>
-    </form>
-  </div>
-</div>
-<div class="card m-3">
-  <div class="card-header">
-    Spells
-  </div>
-  <div class="card-body">
-    <div id="accordion">
-      {% for spell in table %}
-      <div class="card mb-2">
-        <div class="card-header d-flex align-items-center" id="heading{{ spell.id }}">
-          <h2 class="mb-0" style="min-width: 100px">
-            {% if spell.level == 'cantrip' %}
-            <span class="badge badge-secondary w-100">{{ spell.level }}</span>
-            {% else %}
-            <span class="badge badge-secondary w-100">Lv. {{ spell.level }}</span>
-            {% endif %}
-          </h2>
-          <div class="mx-4">
-            <button class="btn btn-link btn-lg p-0" data-toggle="collapse" data-target="#collapse{{ spell.id }}" aria-expanded="true" aria-controls="collapse{{ spell.id }}">
-              {{ spell.name }}
-            </button>
-            <br>
-            {{ spell.summary }}
-          </div>
-          {% if prepareform %}
-          <button type="button" class="btn btn-info ml-auto" data-toggle="modal" data-target="#prepareModal" data-spell="{{ spell.id }}" data-level="{{ spell.level }}" data-action="/prepare" data-title="Prepare {{ spell.name }}">Prepare</button>
-          {% endif %}
-        </div>
-        <div id="collapse{{ spell.id }}" class="collapse" aria-labelledby="heading{{ spell.id }}" data-parent="#accordion">
-          <div class="card-body d-flex">
-            <div class="card bg-light">
-              <div class="card-body">
-                <p><strong>Traditions</strong> {{ spell.traditions }}</p>
-                <p><strong>Actions</strong> {{ spell.actions }}</p>
-                <p><strong>Components</strong> {{ spell.components }}</p>
-                <p><strong>Save</strong> {{ spell.save }}</p>
-                <p><strong>School</strong> {{ spell.school }}</p>
-                <p><strong>Targets</strong> {{ spell.targets }}</p>
-                <p><strong>Rarity</strong> {{ spell.rarity }}</p>
-                <p class="mb-0"><strong>Traits</strong> {{ spell.traits }}</p>
+        <div class="card-body">
+          <form id="filterform" action="">
+            {{ render_form_row([filterform.level, filterform.traditions, filterform.actions, filterform.components, filterform.save, filterform.school, filterform.targets, filterform.rarity, filterform.traits]) }}
+            {{ render_form_row([filterform.name], col_class_default='col-3') }}
+            <div class="form-row">
+              <div class="col-0.5">
+                {{ render_field(filterform.submit) }}
+              </div>
+              <div class="col-0.5">
+                <input class="btn btn-secondary btn-md" id="reset" name="reset" type="reset" value="Reset">
               </div>
             </div>
-            <div class="container m-2">
-              {{ spell.summary }}
-              (this is still the summary as the full spell description is not yet in the database)
-              <hr>
-              (here we will put the heightened spell information)
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    {% if slotsform %}
+    <div class="col-3 order-last p-0">
+      <div class="card sticky-top mt-4 ml-0 mr-4" style="top: 1em" id="slotscard">
+        <div class="card-header">
+          Spell Slots
+        </div>
+        <div class="card-body">
+          {{ render_form(slotsform, action=url_for('.slots')) }}
+          <div class="row">
+            <div class="col-auto">
+              <div class="card bg-light">
+                <div class="card-body p-3">
+                  <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                    <a class="nav-link active" id="v-pills-cantrip-tab" data-toggle="pill" href="#v-pills-cantrip" role="tab" aria-controls="v-pills-cantrip" aria-selected="true">Cantrips</a>
+                    <a class="nav-link" id="v-pills-lv1-tab" data-toggle="pill" href="#v-pills-lv1" role="tab" aria-controls="v-pills-lv1" aria-selected="false">Lv. 1</a>
+                    <a class="nav-link" id="v-pills-lv2-tab" data-toggle="pill" href="#v-pills-lv2" role="tab" aria-controls="v-pills-lv2" aria-selected="false">Lv. 2</a>
+                    <a class="nav-link" id="v-pills-lv3-tab" data-toggle="pill" href="#v-pills-lv3" role="tab" aria-controls="v-pills-lv3" aria-selected="false">Lv. 3</a>
+                    <a class="nav-link" id="v-pills-lv4-tab" data-toggle="pill" href="#v-pills-lv4" role="tab" aria-controls="v-pills-lv4" aria-selected="false">Lv. 4</a>
+                    <a class="nav-link" id="v-pills-lv5-tab" data-toggle="pill" href="#v-pills-lv5" role="tab" aria-controls="v-pills-lv5" aria-selected="false">Lv. 5</a>
+                    <a class="nav-link" id="v-pills-lv6-tab" data-toggle="pill" href="#v-pills-lv6" role="tab" aria-controls="v-pills-lv6" aria-selected="false">Lv. 6</a>
+                    <a class="nav-link" id="v-pills-lv7-tab" data-toggle="pill" href="#v-pills-lv7" role="tab" aria-controls="v-pills-lv7" aria-selected="false">Lv. 7</a>
+                    <a class="nav-link" id="v-pills-lv8-tab" data-toggle="pill" href="#v-pills-lv8" role="tab" aria-controls="v-pills-lv8" aria-selected="false">Lv. 8</a>
+                    <a class="nav-link" id="v-pills-lv9-tab" data-toggle="pill" href="#v-pills-lv9" role="tab" aria-controls="v-pills-lv9" aria-selected="false">Lv. 9</a>
+                    <a class="nav-link" id="v-pills-lv10-tab" data-toggle="pill" href="#v-pills-lv10" role="tab" aria-controls="v-pills-lv10" aria-selected="false">Lv. 10</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="tab-content" id="v-pills-tabContent">
+                <div class="tab-pane fade show active" id="v-pills-cantrip" role="tabpanel" aria-labelledby="v-pills-cantrip-tab">...</div>
+                <div class="tab-pane fade" id="v-pills-lv1" role="tabpanel" aria-labelledby="v-pills-lv1-tab">...</div>
+                <div class="tab-pane fade" id="v-pills-lv2" role="tabpanel" aria-labelledby="v-pills-lv2-tab">...</div>
+                <div class="tab-pane fade" id="v-pills-lv3" role="tabpanel" aria-labelledby="v-pills-lv3-tab">...</div>
+                <div class="tab-pane fade" id="v-pills-lv4" role="tabpanel" aria-labelledby="v-pills-lv4-tab">...</div>
+                <div class="tab-pane fade" id="v-pills-lv5" role="tabpanel" aria-labelledby="v-pills-lv5-tab">...</div>
+                <div class="tab-pane fade" id="v-pills-lv6" role="tabpanel" aria-labelledby="v-pills-lv6-tab">...</div>
+                <div class="tab-pane fade" id="v-pills-lv7" role="tabpanel" aria-labelledby="v-pills-lv7-tab">...</div>
+                <div class="tab-pane fade" id="v-pills-lv8" role="tabpanel" aria-labelledby="v-pills-lv8-tab">...</div>
+                <div class="tab-pane fade" id="v-pills-lv9" role="tabpanel" aria-labelledby="v-pills-lv9-tab">...</div>
+                <div class="tab-pane fade" id="v-pills-lv10" role="tabpanel" aria-labelledby="v-pills-lv10-tab">...</div>
+              </div>
             </div>
           </div>
         </div>
       </div>
-      {% endfor %}
+    </div>
+    {% endif %}
+    <div class="col p-0">
+      <div class="card mt-4 mx-4">
+        <div class="card-header">
+          Spells
+        </div>
+        <div class="card-body">
+          <div id="accordion">
+            {% for spell in table %}
+            <div class="card mb-2">
+              <div class="card-header d-flex align-items-center" id="heading{{ spell.id }}">
+                <h2 class="mb-0" style="min-width: 100px">
+                  {% if spell.level == 'cantrip' %}
+                  <span class="badge badge-secondary w-100">{{ spell.level }}</span>
+                  {% else %}
+                  <span class="badge badge-secondary w-100">Lv. {{ spell.level }}</span>
+                  {% endif %}
+                </h2>
+                <div class="mx-4">
+                  <button class="btn btn-link btn-lg p-0" data-toggle="collapse" data-target="#collapse{{ spell.id }}" aria-expanded="true" aria-controls="collapse{{ spell.id }}">
+                    {{ spell.name }}
+                  </button>
+                  <br>
+                  {{ spell.summary }}
+                </div>
+                {% if prepareform %}
+                <button type="button" class="btn btn-primary ml-auto" data-toggle="modal" data-target="#prepareModal" data-spell="{{ spell.id }}" data-level="{{ spell.level }}" data-action="{{ url_for('.prepare') }}"
+                  data-title="Prepare {{ spell.name }}">Prepare</button>
+                {% endif %}
+              </div>
+              <div id="collapse{{ spell.id }}" class="collapse" aria-labelledby="heading{{ spell.id }}" data-parent="#accordion">
+                <div class="card-body d-flex">
+                  <div class="card bg-light">
+                    <div class="card-body">
+                      <p><strong>Traditions</strong> {{ spell.traditions }}</p>
+                      <p><strong>Actions</strong> {{ spell.actions }}</p>
+                      <p><strong>Components</strong> {{ spell.components }}</p>
+                      <p><strong>Save</strong> {{ spell.save }}</p>
+                      <p><strong>School</strong> {{ spell.school }}</p>
+                      <p><strong>Targets</strong> {{ spell.targets }}</p>
+                      <p><strong>Rarity</strong> {{ spell.rarity }}</p>
+                      <p class="mb-0"><strong>Traits</strong> {{ spell.traits }}</p>
+                    </div>
+                  </div>
+                  <div class="container m-2">
+                    {{ spell.summary }}
+                    (this is still the summary as the full spell description is not yet in the database)
+                    <hr>
+                    (here we will put the heightened spell information)
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -119,5 +178,8 @@
 <script type="text/javascript" src="{{ url_for('static', filename='scripts/spellbook.js') }}"></script>
 {% if prepareform %}
 <script type="text/javascript" src="{{ url_for('static', filename='scripts/prepare.js') }}"></script>
+{% endif %}
+{% if slotsform %}
+<script type="text/javascript" src="{{ url_for('static', filename='scripts/slots.js') }}"></script>
 {% endif %}
 {% endblock %}

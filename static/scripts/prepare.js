@@ -48,6 +48,7 @@ $("#prepareModal").on("submit", function(event) {
     let alert = modal.find('.alert-success');
     alert.find('span').text(data.responseText);
     alert.show();
+    $("#slotscard").trigger("change");
   }).fail(function(data) {
     let alert = modal.find('.alert-danger');
     alert.find('span').text(data.responseText);

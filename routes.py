@@ -1,8 +1,8 @@
 from database import db
 from database.user_data import User, Character, Prepared
 from database.spellbook import Spell
-from forms import LoginForm, SpellbookForm, PrepareForm
-from flask import Blueprint, render_template, redirect, url_for, request
+from forms import LoginForm, SpellbookForm, PrepareForm, SlotsForm
+from flask import Blueprint, render_template, redirect, url_for, request, jsonify
 from flask_login import current_user, login_user, logout_user
 from flask_bootstrap import Bootstrap
 
@@ -65,7 +65,8 @@ def spellbook():
 
     if current_user.is_authenticated:
         return render_template('spellbook.html', title='Spellbook', filterform=filterform,
-                               table=table, prepareform=PrepareForm(current_user))
+                               table=table, prepareform=PrepareForm(current_user),
+                               slotsform=SlotsForm(current_user))
     else:
         return render_template('spellbook.html', title='Spellbook', filterform=filterform,
                                table=table, loginform=LoginForm())
@@ -122,7 +123,7 @@ def logout():
 # Character API #
 #################
 
-@routes.route('/prepare', methods=['POST'])
+@routes.route('/char/prepare', methods=['POST'])
 def prepare():
     if current_user.is_authenticated:
         form = PrepareForm(current_user)
@@ -130,7 +131,7 @@ def prepare():
             spell = Spell.query.get(form.spell.data)
             char = Character.query.get(form.character.data)
             prepare = []
-            for level, field, column in form.db_match:
+            for level, field in form.lv_match:
                 if field.data:
                     if spell.level == "cantrip" and level != "cantrip" and int(field.data) > 0:
                         return "You can only prepare cantrips in cantrip slots", 400
@@ -153,6 +154,24 @@ def prepare():
                 db.session.add(p)
                 db.session.commit()
             return "Succesfully prepred spells", 200
+        return "Validation error", 400
+    else:
+        return "User not logged in", 400
+
+
+@routes.route('/char/slots', methods=['POST'])
+def slots():
+    if current_user.is_authenticated:
+        form = SlotsForm(current_user)
+        if form.validate_on_submit():
+            char = Character.query.get(form.character.data)
+            slots = {}
+            for lv in [x for x in vars(char) if 'spell_slots_' in x]:
+                s = [(x.pid, x.sid, Spell.query.get(x.sid).name)
+                     for x in char.prepared_spells if x.spell_slot_level in lv]
+                s.extend([None] * (getattr(char, lv) - len(s)))
+                slots[lv.lstrip('spell_slots_')] = s
+            return jsonify(slots), 200
         return "Validation error", 400
     else:
         return "User not logged in", 400
