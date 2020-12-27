@@ -54,7 +54,7 @@ class PrepareForm(FlaskForm):
 
     character = SelectField('Character', validators=[DataRequired()])
     spell = HiddenField('Spell ID', validators=[DataRequired()])
-    cantrip = SelectField('Cantrip', choices=list(range(5)), validators=[Optional()])
+    cantrip = SelectField('Cantrip', choices=list(range(2)), validators=[Optional()])
     lv1 = SelectField('Lv. 1', choices=list(range(5)), validators=[Optional()])
     lv2 = SelectField('Lv. 2', choices=list(range(5)), validators=[Optional()])
     lv3 = SelectField('Lv. 3', choices=list(range(5)), validators=[Optional()])
