@@ -23,9 +23,12 @@ class SpellbookForm(FlaskForm):
         self.db_match = [(f[1], c[1]) for f in vars(self).items()
                          for c in vars(Spell).items() if f[0] == c[0] and '_' not in f[0]]
         for field, column in self.db_match:
-            field.choices = {(x[0], x[0]) for x in Spell.query.with_entities(
-                column).distinct().all()}
-            field.choices = sorted(field.choices, key=custom_sort)
+            distinct = [x[0] for x in Spell.query.with_entities(column).distinct().all()]
+            if field.name != "targets":
+                distinct = {(x, x) for y in distinct for x in y.split(", ")}
+            else:
+                distinct = {(x, x) for x in distinct}
+            field.choices = sorted(distinct, key=custom_sort)
 
     level = SelectMultipleField('Level')
     traditions = SelectMultipleField('Traditions')

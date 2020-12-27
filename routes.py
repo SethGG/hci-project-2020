@@ -50,7 +50,8 @@ def spellbook():
                 build_query = Spell.query.filter(False)
                 if isinstance(field.data, list):
                     for selection in field.data:
-                        build_query = build_query.union(total_query.filter(column == selection))
+                        build_query = build_query.union(
+                            total_query.filter(column.contains(selection)))
                 if isinstance(field.data, str):
                     build_query = total_query.filter(column.contains(field.data))
                 total_query = build_query

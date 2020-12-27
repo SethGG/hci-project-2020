@@ -52,8 +52,25 @@
           {% endif %}
         </div>
         <div id="collapse{{ spell.id }}" class="collapse" aria-labelledby="heading{{ spell.id }}" data-parent="#accordion">
-          <div class="card-body">
-            Placeholder
+          <div class="card-body d-flex">
+            <div class="card bg-light">
+              <div class="card-body">
+                <p><strong>Traditions</strong> {{ spell.traditions }}</p>
+                <p><strong>Actions</strong> {{ spell.actions }}</p>
+                <p><strong>Components</strong> {{ spell.components }}</p>
+                <p><strong>Save</strong> {{ spell.save }}</p>
+                <p><strong>School</strong> {{ spell.school }}</p>
+                <p><strong>Targets</strong> {{ spell.targets }}</p>
+                <p><strong>Rarity</strong> {{ spell.rarity }}</p>
+                <p class="mb-0"><strong>Traits</strong> {{ spell.traits }}</p>
+              </div>
+            </div>
+            <div class="container m-2">
+              {{ spell.summary }}
+              (this is still the summary as the full spell description is not yet in the database)
+              <hr>
+              (here we will put the heightened spell information)
+            </div>
           </div>
         </div>
       </div>
