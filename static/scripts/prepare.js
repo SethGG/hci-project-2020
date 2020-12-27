@@ -9,6 +9,7 @@ $('#prepareModal').on('show.bs.modal', function (event) {
   modal.find('.form').attr('action', action);
   modal.find('.alert').hide();
   modal.find('#spell').val(spell)
+  modal.find('.form-control').prop( "disabled", false );
   switch(level) {
     case 'cantrip':
       modal.find('#lv10').prop( "disabled", true );
