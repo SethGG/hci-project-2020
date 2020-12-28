@@ -10,8 +10,8 @@ $("#filterform").on("submit", function(event) {
 });
 
 $("#filterform").on("click", ":reset", function() {
-  $(":selected", this.parent).removeAttr("selected");
-  $(":text", this.parent).attr("value", "");
+  Cookies.remove('collapse');
+  location.href = location.pathname;
 });
 
 $("#accordion").on("show.bs.collapse", function(event) {

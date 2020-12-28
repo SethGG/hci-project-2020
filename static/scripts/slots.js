@@ -13,3 +13,8 @@ $("#slotscard").on("shown.bs.tab", function(event) {
   Cookies.set('character', char_select.val());
   Cookies.set('level', lvl_select.data('value'));
 });
+
+$("#slotscard").on("click", ".spell-link", function(event) {
+  let spell = $(event.target).data('link');
+  Cookies.set('collapse', spell);
+});
