@@ -42,6 +42,7 @@ def character(username, cid):
 
 @routes.route('/spellbook', methods=['GET'])
 def spellbook():
+    print(request.cookies)
     filterform = SpellbookForm(request.args, csrf_enabled=False)
     total_query = Spell.query
     if filterform.validate():
@@ -66,7 +67,7 @@ def spellbook():
     if current_user.is_authenticated:
         return render_template('spellbook.html', title='Spellbook', filterform=filterform,
                                table=table, prepareform=PrepareForm(current_user),
-                               slotsform=SlotsForm(current_user))
+                               characters=current_user.characters)
     else:
         return render_template('spellbook.html', title='Spellbook', filterform=filterform,
                                table=table, loginform=LoginForm())

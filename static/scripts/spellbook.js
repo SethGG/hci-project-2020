@@ -13,3 +13,17 @@ $("#filterform").on("click", ":reset", function() {
   $(":selected", this.parent).removeAttr("selected");
   $(":text", this.parent).attr("value", "");
 });
+
+$("#accordion").on("show.bs.collapse", function(event) {
+  let card = $(event.target).parent();
+  let spell = card.data('spell');
+  Cookies.set('collapse', spell);
+});
+
+$("#accordion").on("hide.bs.collapse", function(event) {
+  let card = $(event.target).parent();
+  let spell = card.data('spell');
+  if (Cookies.get('collapse') == spell) {
+    Cookies.remove('collapse');
+  }
+});
