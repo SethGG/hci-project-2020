@@ -1,7 +1,5 @@
-from database import db
-from database.user_data import User, Character, Prepared
-from database.spellbook import Spell
-from forms import LoginForm, SpellbookForm, PrepareForm, SlotsForm
+from models import db, User, Character, Prepared, Spell
+from forms import LoginForm, SpellbookForm, PrepareForm
 from flask import Blueprint, render_template, redirect, url_for, request, jsonify
 from flask_login import current_user, login_user, logout_user
 from flask_bootstrap import Bootstrap
@@ -42,7 +40,6 @@ def character(username, cid):
 
 @routes.route('/spellbook', methods=['GET'])
 def spellbook():
-    print(request.cookies)
     filterform = SpellbookForm(request.args, csrf_enabled=False)
     total_query = Spell.query
     if filterform.validate():
@@ -148,31 +145,14 @@ def prepare():
                         return "You do not have enough spell slots", 400
 
                     for i in range(int(field.data)):
-                        prepare.append(Prepared(cid=char.cid, sid=spell.id, spell_slot_level=level))
+                        prepare.append(
+                            Prepared(cid=char.cid, sid=spell.sid, spell_slot_level=level))
             if not prepare:
                 return "No spell slots selected", 400
             for p in prepare:
                 db.session.add(p)
                 db.session.commit()
             return "Succesfully prepred spells", 200
-        return "Validation error", 400
-    else:
-        return "User not logged in", 400
-
-
-@routes.route('/char/slots', methods=['POST'])
-def slots():
-    if current_user.is_authenticated:
-        form = SlotsForm(current_user)
-        if form.validate_on_submit():
-            char = Character.query.get(form.character.data)
-            slots = {}
-            for lv in [x for x in vars(char) if 'spell_slots_' in x]:
-                s = [(x.pid, x.sid, Spell.query.get(x.sid).name)
-                     for x in char.prepared_spells if x.spell_slot_level in lv]
-                s.extend([None] * (getattr(char, lv) - len(s)))
-                slots[lv.lstrip('spell_slots_')] = s
-            return jsonify(slots), 200
         return "Validation error", 400
     else:
         return "User not logged in", 400

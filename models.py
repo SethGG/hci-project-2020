@@ -1,14 +1,72 @@
-from database import db
+from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager, UserMixin
 import requests
 import re
 import pandas as pd
 
+db = SQLAlchemy()
+login = LoginManager()
+
+
+@login.user_loader
+def load_user(name):
+    return User.query.get(name)
+
+
+class User(UserMixin, db.Model):
+    __tablename__ = "user"
+
+    username = db.Column(db.String(20), primary_key=True, index=True)
+    password = db.Column(db.String(20), nullable=False)
+
+    characters = db.relationship("Character")
+
+    def get_id(self):
+        return self.username
+
+
+class Character(db.Model):
+    __tablename__ = "character"
+
+    cid = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(20), nullable=False)
+    owner = db.Column(db.String(20), db.ForeignKey('user.username'))
+#   avatar = image
+
+    spell_mod = db.Column(db.Integer, default=0)
+    spell_dc = db.Column(db.Integer, default=0)
+    cantrip_lvl = db.Column(db.Integer, default=0)
+
+    spell_slots_cantrip = db.Column(db.Integer, default=3)
+    spell_slots_1 = db.Column(db.Integer, default=3)
+    spell_slots_2 = db.Column(db.Integer, default=3)
+    spell_slots_3 = db.Column(db.Integer, default=3)
+    spell_slots_4 = db.Column(db.Integer, default=3)
+    spell_slots_5 = db.Column(db.Integer, default=3)
+    spell_slots_6 = db.Column(db.Integer, default=3)
+    spell_slots_7 = db.Column(db.Integer, default=3)
+    spell_slots_8 = db.Column(db.Integer, default=3)
+    spell_slots_9 = db.Column(db.Integer, default=3)
+    spell_slots_10 = db.Column(db.Integer, default=3)
+
+    prepared_spells = db.relationship("Prepared")
+
+
+class Prepared(db.Model):
+    __tablename__ = "prepared"
+
+    pid = db.Column(db.Integer, primary_key=True)
+    cid = db.Column(db.Integer, db.ForeignKey("character.cid"))
+    sid = db.Column(db.Integer, db.ForeignKey("spell.sid"))
+    spell_slot_level = db.Column(db.String(20))
+
+    spell = db.relationship("Spell")
+
 
 class Spell(db.Model):
-    __bind_key__ = 'spellbook'
-    __tablename__ = 'spells'
+    __tablename__ = "spell"
 
-    id = db.Column(db.Integer, primary_key=True)
+    sid = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
     level = db.Column(db.String)
     traditions = db.Column(db.String)
@@ -67,12 +125,8 @@ def rebuild():
     # Generate dataframe from html table
     df = pd.read_html(fixed_table)[0].dropna(how='all', axis='columns')
     df.rename(columns={'Traditions*': 'Traditions', 'School*': 'School'}, inplace=True)
-    df.insert(0, 'id', ids)
-    df.set_index('id', inplace=True)
-
-    # Drop and rebuild database
-    db.drop_all(bind='spellbook')
-    db.create_all(bind='spellbook')
+    df.insert(0, 'sid', ids)
+    df.set_index('sid', inplace=True)
 
     # Popupate database from dataframe
-    df.to_sql('spells', con=db.get_engine(bind='spellbook'), if_exists='append')
+    df.to_sql('spell', con=db.get_engine(), if_exists='replace')
