@@ -79,9 +79,6 @@ class Spell(db.Model):
     traits = db.Column(db.String)
     summary = db.Column(db.String)
 
-    def __repr__(self):
-        return "<Spell(id=%d, name=%s)>" % (self.id, self.name)
-
 
 def rebuild():
     headers = {
@@ -128,5 +125,9 @@ def rebuild():
     df.insert(0, 'sid', ids)
     df.set_index('sid', inplace=True)
 
+    # Drop and recreate table
+    Spell.__table__.drop(db.engine)
+    Spell.__table__.create(db.engine)
+
     # Popupate database from dataframe
-    df.to_sql('spell', con=db.get_engine(), if_exists='replace')
+    df.to_sql('spell', con=db.get_engine(), if_exists='append')

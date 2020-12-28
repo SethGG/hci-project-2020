@@ -42,59 +42,34 @@
               <label for="charselect">Character</label>
               <select class="form-control" id="charselect">
                 {% for char in characters %}
-                <option{{ ' selected' if request.cookies.get('character')|int == char.cid }} id="char-tab-{{ char.cid }}-select" data-toggle="tab" data-target="#char-tab-{{ char.cid }}" value="{{ char.cid }}">{{ char.name }}</option>
+                <option{{ ' selected' if request.cookies.get('character') == char.cid|string }} id="char-tab-{{ char.cid }}-select" data-toggle="tab" data-target="#char-tab-{{ char.cid }}" value="{{ char.cid }}">{{ char.name }}</option>
                   {% endfor %}
               </select>
             </div>
           </form>
           <hr>
           <div class="tab-content">
+            {% set cids = characters|map(attribute='cid')|map('string') %}
             {% for char in characters %}
-            <div class="tab-pane fade{{ ' show active' if request.cookies.get('character')|int == char.cid or (loop.index == 1 and not characters|selectattr('cid', 'equalto', request.cookies.get('character')|int)|list) }}"
-              id="char-tab-{{ char.cid }}">
+            <div class="tab-pane fade{{ ' show active' if request.cookies.get('character') == char.cid|string or (loop.index == 1 and request.cookies.get('character') not in cids) }}" id="char-tab-{{ char.cid }}">
               <div class="row">
-                <div class="col-auto">
+                <div class="col-auto pr-0">
                   <div class="nav flex-column nav-pills" id="v-pills-tab-{{ char.cid }}" role="tablist" aria-orientation="vertical">
-                    {% if char.spell_slots_cantrip > 0 %}
-                    <a class="nav-link active" id="v-pills-cantrip-tab-{{ char.cid }}" data-toggle="pill" href="#v-pills-cantrip-{{ char.cid }}" role="tab" aria-controls="v-pills-cantrip-{{ char.cid }}" aria-selected="true">Cantrips</a>
+                    {% set levels = ['cantrip', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10'] %}
+                    {% for lvl in levels %}
+                    {% if char|attr('spell_slots_'+lvl) > 0 %}
+                    <a class="nav-link{{ ' active' if request.cookies.get('level') == lvl or (loop.index == 1 and request.cookies.get('level') not in levels) }}" id="v-pills-{{ lvl }}-tab-{{ char.cid }}" data-toggle="pill"
+                      href="#v-pills-{{ lvl }}-{{ char.cid }}" role="tab" aria-controls="v-pills-{{ lvl }}-{{ char.cid }}" aria-selected="true" data-value="{{ lvl }}">{{ 'Cantrips' if lvl == 'cantrip' else 'Lv. '+lvl }}</a>
                     {% endif %}
-                    {% if char.spell_slots_1 > 0 %}
-                    <a class="nav-link" id="v-pills-1-tab-{{ char.cid }}" data-toggle="pill" href="#v-pills-1-{{ char.cid }}" role="tab" aria-controls="v-pills-1-{{ char.cid }}" aria-selected="true">Lv. 1</a>
-                    {% endif %}
-                    {% if char.spell_slots_2 > 0 %}
-                    <a class="nav-link" id="v-pills-2-tab-{{ char.cid }}" data-toggle="pill" href="#v-pills-2-{{ char.cid }}" role="tab" aria-controls="v-pills-2-{{ char.cid }}" aria-selected="true">Lv. 2</a>
-                    {% endif %}
-                    {% if char.spell_slots_3 > 0 %}
-                    <a class="nav-link" id="v-pills-3-tab-{{ char.cid }}" data-toggle="pill" href="#v-pills-3-{{ char.cid }}" role="tab" aria-controls="v-pills-3-{{ char.cid }}" aria-selected="true">Lv. 3</a>
-                    {% endif %}
-                    {% if char.spell_slots_4 > 0 %}
-                    <a class="nav-link" id="v-pills-4-tab-{{ char.cid }}" data-toggle="pill" href="#v-pills-4-{{ char.cid }}" role="tab" aria-controls="v-pills-4-{{ char.cid }}" aria-selected="true">Lv. 4</a>
-                    {% endif %}
-                    {% if char.spell_slots_5 > 0 %}
-                    <a class="nav-link" id="v-pills-5-tab-{{ char.cid }}" data-toggle="pill" href="#v-pills-5-{{ char.cid }}" role="tab" aria-controls="v-pills-5-{{ char.cid }}" aria-selected="true">Lv. 5</a>
-                    {% endif %}
-                    {% if char.spell_slots_6 > 0 %}
-                    <a class="nav-link" id="v-pills-6-tab-{{ char.cid }}" data-toggle="pill" href="#v-pills-6-{{ char.cid }}" role="tab" aria-controls="v-pills-6-{{ char.cid }}" aria-selected="true">Lv. 6</a>
-                    {% endif %}
-                    {% if char.spell_slots_7 > 0 %}
-                    <a class="nav-link" id="v-pills-7-tab-{{ char.cid }}" data-toggle="pill" href="#v-pills-7-{{ char.cid }}" role="tab" aria-controls="v-pills-7-{{ char.cid }}" aria-selected="true">Lv. 7</a>
-                    {% endif %}
-                    {% if char.spell_slots_8 > 0 %}
-                    <a class="nav-link" id="v-pills-8-tab-{{ char.cid }}" data-toggle="pill" href="#v-pills-8-{{ char.cid }}" role="tab" aria-controls="v-pills-8-{{ char.cid }}" aria-selected="true">Lv. 8</a>
-                    {% endif %}
-                    {% if char.spell_slots_9 > 0 %}
-                    <a class="nav-link" id="v-pills-9-tab-{{ char.cid }}" data-toggle="pill" href="#v-pills-9-{{ char.cid }}" role="tab" aria-controls="v-pills-9-{{ char.cid }}" aria-selected="true">Lv. 9</a>
-                    {% endif %}
-                    {% if char.spell_slots_10 > 0 %}
-                    <a class="nav-link" id="v-pills-10-tab-{{ char.cid }}" data-toggle="pill" href="#v-pills-10-{{ char.cid }}" role="tab" aria-controls="v-pills-10-{{ char.cid }}" aria-selected="true">Lv. 10</a>
-                    {% endif %}
+                    {% endfor %}
                   </div>
                 </div>
                 <div class="col">
                   <div class="tab-content" id="v-pills-tabContent-{{ char.cid }}">
-                    {% for lvl in ['cantrip', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10'] %}
+                    {% for lvl in levels %}
                     {% if char|attr('spell_slots_'+lvl) > 0 %}
-                    <div class="tab-pane fade{{ ' show active' if loop.index == 1 }}" id="v-pills-{{ lvl }}-{{ char.cid }}" role="tabpanel" aria-labelledby="v-pills-{{ lvl }}-tab-{{ char.cid }}">
+                    <div class="tab-pane fade{{ ' show active' if request.cookies.get('level') == lvl or (loop.index == 1 and request.cookies.get('level') not in levels) }}" id="v-pills-{{ lvl }}-{{ char.cid }}" role="tabpanel"
+                      aria-labelledby="v-pills-{{ lvl }}-tab-{{ char.cid }}">
                       {% set prep = char.prepared_spells|selectattr('spell_slot_level', 'equalto', lvl)|list %}
                       {% for i in range(char|attr('spell_slots_'+lvl)) %}
                       <div class="card bg-light mb-2">
@@ -149,7 +124,7 @@
                   data-title="Prepare {{ spell.name }}">Prepare</button>
                 {% endif %}
               </div>
-              <div id="collapse{{ spell.sid }}" class="collapse{{ ' show' if request.cookies.get('collapse')|int == spell.sid }}" aria-labelledby="heading{{ spell.sid }}" data-parent="#accordion">
+              <div id="collapse{{ spell.sid }}" class="collapse{{ ' show' if request.cookies.get('collapse') == spell.sid|string }}" aria-labelledby="heading{{ spell.sid }}" data-parent="#accordion">
                 <div class="card-body d-flex">
                   <div class="card bg-light">
                     <div class="card-body">

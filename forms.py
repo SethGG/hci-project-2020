@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, SelectMultipleField, SelectField, HiddenField
 from wtforms.validators import DataRequired, Optional
-from models import Spell, Character
+from models import Spell
 
 
 class LoginForm(FlaskForm):

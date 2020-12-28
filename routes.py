@@ -1,6 +1,6 @@
 from models import db, User, Character, Prepared, Spell
 from forms import LoginForm, SpellbookForm, PrepareForm
-from flask import Blueprint, render_template, redirect, url_for, request, jsonify
+from flask import Blueprint, render_template, redirect, url_for, request
 from flask_login import current_user, login_user, logout_user
 from flask_bootstrap import Bootstrap
 
@@ -100,7 +100,9 @@ def register():
                 user = User(username=form.username.data, password=form.password.data)
                 db.session.add(user)
                 char = Character(name="Demo Character", owner=form.username.data)
+                char2 = Character(name="Demo Character 2", owner=form.username.data)
                 db.session.add(char)
+                db.session.add(char2)
                 db.session.commit()
                 login_user(user)
                 return "Succesfully registered and logged in", 200
