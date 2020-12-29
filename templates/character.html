@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-{% extends "navbar.html" %}
+{% extends "base.html" %}
 {% from 'bootstrap/table.html' import render_table %}
 
 {% block content %}
-{{ super() }}
+{% include "navbar.html" %}
 This is the work in progress character page for {{ char.name }}.
 <br>
 Stats:
@@ -13,5 +13,11 @@ Stats:
 Spell Slots:
 <br>
 {{ render_table(char.prepared_spells)}}
+{% endblock %}
 
+{% block scripts %}
+{{ super() }}
+{% assets "char_page" %}
+<script type="text/javascript" src="{{ ASSET_URL }}"></script>
+{% endassets %}
 {% endblock %}

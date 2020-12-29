@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-{% extends "navbar.html" %}
+{% extends "base.html" %}
 
 {% block content %}
-{{ super() }}
+{% include "navbar.html" %}
 This is the work in progress user page for {{ user.username }}.
 <br>
 Characters:
@@ -11,5 +11,11 @@ Characters:
 <a href="{{ url_for('.character', username=user.username, cid=c.cid )}}">{{ c.name }}</a>
 <br>
 {% endfor %}
+{% endblock %}
 
+{% block scripts %}
+{{ super() }}
+{% assets "user_page" %}
+<script type="text/javascript" src="{{ ASSET_URL }}"></script>
+{% endassets %}
 {% endblock %}
