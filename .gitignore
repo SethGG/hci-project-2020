@@ -1,3 +1,5 @@
 *.pyc
 *.db
 venv
+static/gen
+static/.webassets-cache

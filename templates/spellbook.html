@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-{% extends "navbar.html" %}
+{% extends "base.html" %}
 {% from 'bootstrap/form.html' import render_form, render_field, render_form_row %}
 {% from 'bootstrap/table.html' import render_table %}
 
 {% block content %}
-{{ super() }}
+{% include "navbar.html" %}
 <div class="container-fluid">
   <div class="row">
     <div class="col p-0">
@@ -53,19 +53,9 @@
             {% for char in characters %}
             <div class="tab-pane fade{{ ' show active' if request.cookies.get('character') == char.cid|string or (loop.index == 1 and request.cookies.get('character') not in cids) }}" id="char-tab-{{ char.cid }}">
               <div class="row">
-                <div class="col-auto pr-0">
-                  <div class="nav flex-column nav-pills" id="v-pills-tab-{{ char.cid }}" role="tablist" aria-orientation="vertical">
-                    {% set levels = ['cantrip', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10'] %}
-                    {% for lvl in levels %}
-                    {% if char|attr('spell_slots_'+lvl) > 0 %}
-                    <a class="nav-link{{ ' active' if request.cookies.get('level') == lvl or (loop.index == 1 and request.cookies.get('level') not in levels) }}" id="v-pills-{{ lvl }}-tab-{{ char.cid }}" data-toggle="pill"
-                      href="#v-pills-{{ lvl }}-{{ char.cid }}" role="tab" aria-controls="v-pills-{{ lvl }}-{{ char.cid }}" aria-selected="true" data-value="{{ lvl }}">{{ 'Cantrips' if lvl == 'cantrip' else 'Lv. '+lvl }}</a>
-                    {% endif %}
-                    {% endfor %}
-                  </div>
-                </div>
                 <div class="col">
                   <div class="tab-content" id="v-pills-tabContent-{{ char.cid }}">
+                    {% set levels = ['cantrip', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10'] %}
                     {% for lvl in levels %}
                     {% if char|attr('spell_slots_'+lvl) > 0 %}
                     <div class="tab-pane fade{{ ' show active' if request.cookies.get('level') == lvl or (loop.index == 1 and request.cookies.get('level') not in levels) }}" id="v-pills-{{ lvl }}-{{ char.cid }}" role="tabpanel"
@@ -76,15 +66,30 @@
                         <div class="card-body d-flex align-items-center py-2">
                           {% if i < prep|length %}
                           <a class="spell-link" data-link="{{ prep[i].sid }}" href="{{ url_for('.spellbook')+'?sid='+prep[i].sid|string+'#'+prep[i].sid|string }}">{{ prep[i].spell.name }}</a>
+                          <button type="button" class="close ml-auto" aria-label="Close">
+                            <span data-action="{{ url_for('.unprepare', pid=prep[i].pid) }}" aria-hidden="true">&times;</span>
+                          </button>
                           {% else %}
-                          &lt;empty slot&gt;
-                          {% endif %}
+                          <spanc class="text-muted">&lt;empty slot&gt;</span>
+                            {% endif %}
                         </div>
                       </div>
                       {% endfor %}
                     </div>
                     {% endif %}
                     {% endfor %}
+                  </div>
+                </div>
+                <div class="col-auto pl-0">
+                  <div class="card bg-light">
+                    <div class="card-body p-2 nav flex-column nav-pills" id="v-pills-tab-{{ char.cid }}" role="tablist" aria-orientation="vertical">
+                      {% for lvl in levels %}
+                      {% if char|attr('spell_slots_'+lvl) > 0 %}
+                      <a class="nav-link{{ ' active' if request.cookies.get('level') == lvl or (loop.index == 1 and request.cookies.get('level') not in levels) }}" id="v-pills-{{ lvl }}-tab-{{ char.cid }}" data-toggle="pill"
+                        href="#v-pills-{{ lvl }}-{{ char.cid }}" role="tab" aria-controls="v-pills-{{ lvl }}-{{ char.cid }}" aria-selected="true" data-value="{{ lvl }}">{{ 'Cantrips' if lvl == 'cantrip' else 'Lv. '+lvl }}</a>
+                      {% endif %}
+                      {% endfor %}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -171,10 +176,6 @@
             <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
             <strong>Error! </strong><span></span>
           </div>
-          <div class="alert alert-success alert-dismissible">
-            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-            <strong>Success! </strong><span></span>
-          </div>
           {{ prepareform.spell }}
           {{ render_field(prepareform.character) }}
           {{ render_form_row([prepareform.cantrip, prepareform.lv1, prepareform.lv2, prepareform.lv3, prepareform.lv4, prepareform.lv5, prepareform.lv6, prepareform.lv7, prepareform.lv8, prepareform.lv9, prepareform.lv10])}}
@@ -192,11 +193,7 @@
 
 {% block scripts %}
 {{ super() }}
-<script type="text/javascript" src="{{ url_for('static', filename='scripts/spellbook.js') }}"></script>
-{% if prepareform %}
-<script type="text/javascript" src="{{ url_for('static', filename='scripts/prepare.js') }}"></script>
-{% endif %}
-{% if characters %}
-<script type="text/javascript" src="{{ url_for('static', filename='scripts/slots.js') }}"></script>
-{% endif %}
+{% assets "spellbook_page_logged_in" if prepareform and characters else "spellbook_page_logged_out" %}
+<script type="text/javascript" src="{{ ASSET_URL }}"></script>
+{% endassets %}
 {% endblock %}

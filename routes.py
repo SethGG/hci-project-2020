@@ -154,7 +154,19 @@ def prepare():
             for p in prepare:
                 db.session.add(p)
                 db.session.commit()
-            return "Succesfully prepred spells", 200
+            return "Succesfully prepared spells", 200
+        return "Validation error", 400
+    else:
+        return "User not logged in", 400
+
+
+@routes.route('/char/prepare/<pid>', methods=['DELETE'])
+def unprepare(pid):
+    if current_user.is_authenticated:
+        for p in [p for c in current_user.characters for p in c.prepared_spells if str(p.pid) == pid]:
+            db.session.delete(p)
+            db.session.commit()
+            return "Succesfully unprepared spell", 200
         return "Validation error", 400
     else:
         return "User not logged in", 400

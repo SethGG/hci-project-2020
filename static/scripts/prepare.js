@@ -10,6 +10,9 @@ $('#prepareModal').on('show.bs.modal', function (event) {
   modal.find('.alert').hide();
   modal.find('#spell').val(spell)
   modal.find('.form-control').prop( "disabled", false );
+  if (Cookies.get('character')) {
+    modal.find('#character').val(Cookies.get('character'));
+  }
   switch(level) {
     case 'cantrip':
       modal.find('#lv10').prop( "disabled", true );
@@ -45,10 +48,9 @@ $("#prepareModal").on("submit", function(event) {
   let form = modal.find('.form');
   let action = form.attr('action');
   $.post(action, form.serialize(), function(data) {
-    let alert = modal.find('.alert-success');
-    alert.find('span').text(data.responseText);
-    alert.show();
-    $("#slotscard").trigger("change");
+    char = form.find('#character').val();
+    Cookies.set('character', char);
+    location.reload();
   }).fail(function(data) {
     let alert = modal.find('.alert-danger');
     alert.find('span').text(data.responseText);

@@ -1,8 +1,5 @@
 <!DOCTYPE html>
-{% extends "base.html" %}
 {% from 'bootstrap/nav.html' import render_nav_item %}
-
-{% block content %}
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <a class="navbar-brand w-100" href="#">PF2 Spellmaster</a>
   <div class="navbar-nav mx-auto">
@@ -20,17 +17,6 @@
   <div class="w-100">
   </div>
 </nav>
-
 {% if loginform %}
 {% include "login.html" %}
 {% endif %}
-{% endblock %}
-
-{% block scripts %}
-{{ super() }}
-{% if not loginform %}
-<script type="text/javascript" src="{{ url_for('static', filename='scripts/navbar.js') }}"></script>
-{% else %}
-<script type="text/javascript" src="{{ url_for('static', filename='scripts/login.js') }}"></script>
-{% endif %}
-{% endblock %}

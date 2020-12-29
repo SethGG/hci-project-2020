@@ -2,6 +2,7 @@ from flask import Flask
 from config import Config
 from models import db, login, rebuild
 from routes import routes, bootstrap
+from assets import assets
 import argparse
 
 app = Flask(__name__)
@@ -9,6 +10,7 @@ app.config.from_object(Config)
 db.init_app(app)
 login.init_app(app)
 bootstrap.init_app(app)
+assets.init_app(app)
 app.register_blueprint(routes)
 app.app_context().push()
 

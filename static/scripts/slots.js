@@ -18,3 +18,14 @@ $("#slotscard").on("click", ".spell-link", function(event) {
   let spell = $(event.target).data('link');
   Cookies.set('collapse', spell);
 });
+
+$("#slotscard").on("click", ".close", function(event) {
+  let action = $(event.target).data('action');
+  $.ajax({
+    method: "DELETE",
+    url: action,
+    success: function(result){
+      location.reload();
+    }
+  });
+});
