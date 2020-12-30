@@ -5,10 +5,10 @@
 
 {% block content %}
 {% include "navbar.html" %}
-<div class="container-fluid">
+<div class="container p-0">
   <div class="row">
     <div class="col p-0">
-      <div class="card mt-4 mx-4">
+      <div class="card mt-4">
         <div class="card-header">
           Filters
         </div>
@@ -31,8 +31,8 @@
   </div>
   <div class="row">
     {% if characters %}
-    <div class="col-3 order-last p-0">
-      <div class="card sticky-top mt-4 ml-0 mr-4" style="top: 1em" id="slotscard">
+    <div class="col-auto order-last p-0">
+      <div class="card sticky-top my-4 ml-4" style="top: 1em" id="slotscard">
         <div class="card-header">
           Spell Slots
         </div>
@@ -65,7 +65,7 @@
                       <div class="card bg-light mb-2">
                         <div class="card-body d-flex align-items-center py-2">
                           {% if i < prep|length %}
-                          <a class="spell-link" data-link="{{ prep[i].sid }}" href="{{ url_for('.spellbook')+'?sid='+prep[i].sid|string+'#'+prep[i].sid|string }}">{{ prep[i].spell.name }}</a>
+                          <a class="spell-link mr-3" data-link="{{ prep[i].sid }}" href="{{ url_for('.spellbook')+'?sid='+prep[i].sid|string+'#'+prep[i].sid|string }}">{{ prep[i].spell.name }}</a>
                           <button type="button" class="close ml-auto" aria-label="Close">
                             <span data-action="{{ url_for('.unprepare', pid=prep[i].pid) }}" aria-hidden="true">&times;</span>
                           </button>
@@ -81,15 +81,13 @@
                   </div>
                 </div>
                 <div class="col-auto pl-0">
-                  <div class="card bg-light">
-                    <div class="card-body p-2 nav flex-column nav-pills" id="v-pills-tab-{{ char.cid }}" role="tablist" aria-orientation="vertical">
-                      {% for lvl in levels %}
-                      {% if char|attr('spell_slots_'+lvl) > 0 %}
-                      <a class="nav-link{{ ' active' if request.cookies.get('level') == lvl or (loop.index == 1 and request.cookies.get('level') not in levels) }}" id="v-pills-{{ lvl }}-tab-{{ char.cid }}" data-toggle="pill"
-                        href="#v-pills-{{ lvl }}-{{ char.cid }}" role="tab" aria-controls="v-pills-{{ lvl }}-{{ char.cid }}" aria-selected="true" data-value="{{ lvl }}">{{ 'Cantrips' if lvl == 'cantrip' else 'Lv. '+lvl }}</a>
-                      {% endif %}
-                      {% endfor %}
-                    </div>
+                  <div class="nav flex-column nav-pills" id="v-pills-tab-{{ char.cid }}" role="tablist" aria-orientation="vertical">
+                    {% for lvl in levels %}
+                    {% if char|attr('spell_slots_'+lvl) > 0 %}
+                    <a class="nav-link{{ ' active' if request.cookies.get('level') == lvl or (loop.index == 1 and request.cookies.get('level') not in levels) }}" id="v-pills-{{ lvl }}-tab-{{ char.cid }}" data-toggle="pill"
+                      href="#v-pills-{{ lvl }}-{{ char.cid }}" role="tab" aria-controls="v-pills-{{ lvl }}-{{ char.cid }}" aria-selected="true" data-value="{{ lvl }}">{{ 'Cantrips' if lvl == 'cantrip' else 'Lv. '+lvl }}</a>
+                    {% endif %}
+                    {% endfor %}
                   </div>
                 </div>
               </div>
@@ -101,7 +99,7 @@
     </div>
     {% endif %}
     <div class="col p-0">
-      <div class="card mt-4 mx-4">
+      <div class="card my-4">
         <div class="card-header">
           Spells
         </div>
@@ -110,13 +108,13 @@
             {% for spell in table %}
             <div class="card mb-2" data-spell="{{ spell.sid }}">
               <div class="card-header d-flex align-items-center" id="{{ spell.sid }}">
-                <h2 class="mb-0" style="min-width: 100px">
+                <h3 class="mb-0" style="min-width: 3.5em; max-width: 3.5em">
                   {% if spell.level == 'cantrip' %}
                   <span class="badge badge-secondary w-100">{{ spell.level }}</span>
                   {% else %}
                   <span class="badge badge-secondary w-100">Lv. {{ spell.level }}</span>
                   {% endif %}
-                </h2>
+                </h3>
                 <div class="mx-4">
                   <button class="btn btn-link btn-lg p-0 collapsed" data-toggle="collapse" data-target="#collapse{{ spell.sid }}" aria-expanded="false" aria-controls="collapse{{ spell.sid }}">
                     {{ spell.name }}
