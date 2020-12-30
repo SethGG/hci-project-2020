@@ -1,5 +1,5 @@
 from models import db, User, Character, Prepared, Spell
-from forms import LoginForm, SpellbookForm, PrepareForm
+from forms import LoginForm, SpellbookForm, PrepareForm, StatsForm
 from flask import Blueprint, render_template, redirect, url_for, request
 from flask_login import current_user, login_user, logout_user
 from flask_bootstrap import Bootstrap
@@ -35,7 +35,7 @@ def character(username, cid):
     if current_user.username != username or cid not in [str(x.cid) for x in current_user.characters]:
         return redirect(url_for('.user', username=current_user.username))
     char = Character.query.get(int(cid))
-    return render_template('character.html', title='Character Page', char=char)
+    return render_template('character.html', title='Character Page', char=char, statsform=StatsForm(char))
 
 
 @routes.route('/spellbook', methods=['GET'])
@@ -167,6 +167,24 @@ def unprepare(pid):
             db.session.delete(p)
             db.session.commit()
             return "Succesfully unprepared spell", 200
+        return "Validation error", 400
+    else:
+        return "User not logged in", 400
+
+
+@routes.route('/char/<cid>/stats', methods=['POST'])
+def stats(cid):
+    if current_user.is_authenticated:
+        for c in [c for c in current_user.characters if str(c.cid) == cid]:
+            form = StatsForm(c)
+            if form.validate_on_submit:
+                c.spell_mod = form.spell_attack_rol.data
+                c.spell_dc = form.spell_dc.data
+                c.cantrip_lvl = form.cantrip_lvl.data
+                for lvl in ['cantrip'] + [str(i) for i in range(1, 11)]:
+                    setattr(c, 'spell_slots_' + lvl, getattr(form, 'spell_slots_' + lvl).data)
+                db.session.commit()
+                return "Stats updated", 200
         return "Validation error", 400
     else:
         return "User not logged in", 400

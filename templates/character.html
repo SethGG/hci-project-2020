@@ -1,18 +1,121 @@
 <!DOCTYPE html>
 {% extends "base.html" %}
-{% from 'bootstrap/table.html' import render_table %}
+{% from 'bootstrap/form.html' import render_field, render_form_row %}
 
 {% block content %}
 {% include "navbar.html" %}
-This is the work in progress character page for {{ char.name }}.
-<br>
-Stats:
-<br>
-{{ render_table([char]) }}
-<br>
-Spell Slots:
-<br>
-{{ render_table(char.prepared_spells)}}
+<div class="container">
+  <div class="row mt-4">
+    <div class="col-auto d-flex flex-column justify-content-end">
+      <img src="{{ url_for('static', filename='images/gandalf.jpg') }}" class="img-thumbnail">
+      <div class="card mt-3">
+        <div class="card-header text-center">
+          <h5 class="mb-0">{{ char.name }}</h5>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card">
+        <div class="card-header">
+          Stats
+        </div>
+        <div class="card-body">
+          <form id="statsform" action="{{ url_for('.stats', cid=char.cid) }}">
+            {{ render_form_row([statsform.spell_attack_rol, statsform.spell_dc, statsform.cantrip_lvl], col_class_default='col text-center') }}
+            <hr>
+            <p class="text-center">Spell Slots</p>
+            {{ render_form_row([statsform.spell_slots_cantrip, statsform.spell_slots_1, statsform.spell_slots_2, statsform.spell_slots_3, statsform.spell_slots_4, statsform.spell_slots_5, statsform.spell_slots_6, statsform.spell_slots_7, statsform.spell_slots_8, statsform.spell_slots_9, statsform.spell_slots_10], col_class_default='col text-center') }}
+            <hr>
+            <div class="form-row">
+              <div class="col-0.5">
+                {{ render_field(statsform.submit) }}
+              </div>
+              <div class="col-0.5">
+                <input class="btn btn-secondary btn-md" id="reset" name="reset" type="reset" value="Reset">
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row mt-4">
+    <div class="col">
+      <div class="card" id="prepspells">
+        <div class="card-header">
+          Prepared Spells
+        </div>
+        <div class="card-body">
+          {% set levels = ['cantrip', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10'] %}
+          {% for lvl in levels if char|attr('spell_slots_'+lvl) > 0 %}
+          <hr>
+          <h3 class="mb-0 mx-auto" style="min-width: 3.5em; max-width: 3.5em">
+            {% if lvl == 'cantrip' %}
+            <span class="badge badge-secondary w-100">{{ lvl }}</span>
+            {% else %}
+            <span class="badge badge-secondary w-100">Lv. {{ lvl }}</span>
+            {% endif %}
+          </h3>
+          <hr>
+          <div class="row justify-content-center">
+            {% set prep = char.prepared_spells|selectattr('spell_slot_level', 'equalto', lvl)|list %}
+            {% for i in range(char|attr('spell_slots_'+lvl)) %}
+            <div class="col-3 my-1">
+              <div class="card bg-light">
+                <div class="card-body d-flex align-items-center py-2">
+                  {% if i < prep|length %}
+                  <a class="spell-link" href="#tab-{{ prep[i].pid }}">{{ prep[i].spell.name }}</a>
+                  <button type="button" class="close ml-auto" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                  {% else %}
+                  <span class="text-muted">&lt;empty slot&gt;</span>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+          <div class="tab-content">
+            {% for p in prep %}
+            <div id="tab-{{ p.pid }}" class="tab-pane fade hide">
+              <div class=" card mt-3">
+                <div class="card-header d-flex align-items-center">
+                  {{ p.spell.name }}
+                  <button type="button" class="close ml-auto" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="card-body d-flex">
+                  <div class="card bg-light">
+                    <div class="card-body">
+                      <p><strong>Traditions</strong> {{ p.spell.traditions }}</p>
+                      <p><strong>Actions</strong> {{ p.spell.actions }}</p>
+                      <p><strong>Components</strong> {{ p.spell.components }}</p>
+                      <p><strong>Save</strong> {{ p.spell.save }}</p>
+                      <p><strong>School</strong> {{ p.spell.school }}</p>
+                      <p><strong>Targets</strong> {{ p.spell.targets }}</p>
+                      <p><strong>Rarity</strong> {{ p.spell.rarity }}</p>
+                      <p class="mb-0"><strong>Traits</strong> {{ p.spell.traits }}</p>
+                    </div>
+                  </div>
+                  <div class="container m-2">
+                    {{ p.spell.summary }}
+                    (this is still the summary as the full spell description is not yet in the database)
+                    <hr>
+                    (here we will put the heightened spell information)
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}
 
 {% block scripts %}

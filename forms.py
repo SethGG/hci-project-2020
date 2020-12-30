@@ -1,7 +1,8 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, SelectMultipleField, SelectField, HiddenField
+from wtforms import StringField, PasswordField, SubmitField, SelectMultipleField, SelectField, HiddenField, IntegerField
 from wtforms.validators import DataRequired, Optional
 from models import Spell
+from flask import request
 
 
 class LoginForm(FlaskForm):
@@ -65,3 +66,39 @@ class PrepareForm(FlaskForm):
     lv9 = SelectField('Lv. 9', choices=list(range(5)), validators=[Optional()])
     lv10 = SelectField('Lv. 10', choices=list(range(5)), validators=[Optional()])
     submit = SubmitField('Confirm')
+
+
+class StatsForm(FlaskForm):
+    def __init__(self, char, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if not request.form:
+            self.spell_attack_rol.data = char.spell_mod
+            self.spell_dc.data = char.spell_dc
+            self.cantrip_lvl.data = char.cantrip_lvl
+            self.spell_slots_cantrip.data = char.spell_slots_cantrip
+            self.spell_slots_1.data = char.spell_slots_1
+            self.spell_slots_2.data = char.spell_slots_2
+            self.spell_slots_3.data = char.spell_slots_3
+            self.spell_slots_4.data = char.spell_slots_4
+            self.spell_slots_5.data = char.spell_slots_5
+            self.spell_slots_6.data = char.spell_slots_6
+            self.spell_slots_7.data = char.spell_slots_7
+            self.spell_slots_8.data = char.spell_slots_8
+            self.spell_slots_9.data = char.spell_slots_9
+            self.spell_slots_10.data = char.spell_slots_10
+
+    spell_attack_rol = IntegerField('Spell Attack Roll', validators=[DataRequired()])
+    spell_dc = IntegerField('Spell DC', validators=[DataRequired()])
+    cantrip_lvl = IntegerField('Cantrip Level', validators=[DataRequired()])
+    spell_slots_cantrip = IntegerField('Cantrip', validators=[DataRequired()])
+    spell_slots_1 = IntegerField('Lv. 1', validators=[DataRequired()])
+    spell_slots_2 = IntegerField('Lv. 2', validators=[DataRequired()])
+    spell_slots_3 = IntegerField('Lv. 3', validators=[DataRequired()])
+    spell_slots_4 = IntegerField('Lv. 4', validators=[DataRequired()])
+    spell_slots_5 = IntegerField('Lv. 5', validators=[DataRequired()])
+    spell_slots_6 = IntegerField('Lv. 6', validators=[DataRequired()])
+    spell_slots_7 = IntegerField('Lv. 7', validators=[DataRequired()])
+    spell_slots_8 = IntegerField('Lv. 8', validators=[DataRequired()])
+    spell_slots_9 = IntegerField('Lv. 9', validators=[DataRequired()])
+    spell_slots_10 = IntegerField('Lv. 10', validators=[DataRequired()])
+    submit = SubmitField('Save')
