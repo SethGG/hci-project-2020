@@ -115,10 +115,11 @@
                     </div>
                   </div>
                   <div class="container m-2">
-                    {{ p.spell.summary }}
-                    (this is still the summary as the full spell description is not yet in the database)
+                    <p>{{ p.spell.description }}</p>
                     <hr>
-                    (here we will put the heightened spell information)
+                    {% for h in ['plus1','plus2','plus3','2nd','3rd','4th','5th','6th','7th','8th','9th','10th'] %}
+                    <p>{{ p.spell['heightened_' + h] }}</p>
+                    {% endfor %}
                   </div>
                 </div>
               </div>
