@@ -14,6 +14,19 @@ $("#filterform").on("click", ":reset", function() {
   location.href = location.pathname;
 });
 
+$("#filterform").on("mousedown", "option", function(event) {
+  let $this = $(this),
+      that = this,
+      scroll = that.parentElement.scrollTop;
+
+  event.preventDefault();
+  $this.prop('selected', !$this.prop('selected'));
+
+  setTimeout(function() {
+      that.parentElement.scrollTop = scroll;
+  }, 0);
+});
+
 $("#accordion").on("show.bs.collapse", function(event) {
   let card = $(event.target).parent();
   let spell = card.data('spell');
