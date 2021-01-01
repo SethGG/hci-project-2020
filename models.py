@@ -3,6 +3,7 @@ from flask_login import LoginManager, UserMixin
 import requests
 import re
 import pandas as pd
+from bs4 import BeautifulSoup
 
 db = SQLAlchemy()
 login = LoginManager()
@@ -79,6 +80,19 @@ class Spell(db.Model):
     rarity = db.Column(db.String)
     traits = db.Column(db.String)
     summary = db.Column(db.String)
+    description = db.Column(db.String)
+    heightened_plus1 = db.Column('heightened_+1', db.String)
+    heightened_plus2 = db.Column('heightened_+2', db.String)
+    heightened_plus3 = db.Column('heightened_+3', db.String)
+    heightened_2nd = db.Column(db.String)
+    heightened_3rd = db.Column(db.String)
+    heightened_4th = db.Column(db.String)
+    heightened_5th = db.Column(db.String)
+    heightened_6th = db.Column(db.String)
+    heightened_7th = db.Column(db.String)
+    heightened_8th = db.Column(db.String)
+    heightened_9th = db.Column(db.String)
+    heightened_10th = db.Column(db.String)
 
 
 def rebuild():
@@ -125,6 +139,49 @@ def rebuild():
     df.rename(columns={'Traditions*': 'Traditions', 'School*': 'School'}, inplace=True)
     df.insert(0, 'sid', ids)
     df.set_index('sid', inplace=True)
+
+    # Loop over spells to get additional information
+    df['description'] = ""
+    for id in ids:
+        headers = {
+            'authority': 'pf2.easytool.es',
+            'accept': 'text/html, */*; q=0.01',
+            'x-requested-with': 'XMLHttpRequest',
+            'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36',
+            'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
+            'origin': 'https://pf2.easytool.es',
+            'sec-fetch-site': 'same-origin',
+            'sec-fetch-mode': 'cors',
+            'sec-fetch-dest': 'empty',
+            'referer': 'https://pf2.easytool.es/spellbook/',
+            'accept-language': 'en-US,en;q=0.9,nl;q=0.8',
+        }
+
+        data = {
+            'id_feature': id,
+            'CP': '0',
+            'type': '1',
+            'optional': 'optundefined'
+        }
+
+        response = requests.post('https://pf2.easytool.es/php/actionInfo.php',
+                                 headers=headers, data=data)
+        response.encoding = 'utf-8'
+
+        soup = BeautifulSoup(response.text, 'html.parser')
+        desc = soup.find('section', class_="content")
+        height = soup.find('section', class_="content extra")
+
+        if desc:
+            df.at[id, 'description'] = desc.text
+        if height:
+            pars = height.find_all('p', class_="gris")
+            for par in pars:
+                find_lvl = re.compile(r'Heightened \((.+?)\)')
+                lvl = find_lvl.match(par.strong.text).group(1)
+                if 'heightened_' + lvl not in df:
+                    df['heightened_' + lvl] = ""
+                df.at[id, 'heightened_' + lvl] = par.text
 
     # Drop and recreate table
     Spell.__table__.drop(db.engine)
