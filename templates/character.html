@@ -42,13 +42,16 @@
   <div class="row mt-4">
     <div class="col">
       <div class="card" id="prepspells">
-        <div class="card-header">
-          Prepared Spells
+        <div class="card-header d-flex align-items-center">
+          <span class="mr-auto">Prepared Spells</span>
+          <button type="button" class="btn btn-primary" id="regainall">Regain All Slots</button>
         </div>
         <div class="card-body">
           {% set levels = ['cantrip', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10'] %}
           {% for lvl in levels if char|attr('spell_slots_'+lvl) > 0 %}
+          {% if lvl != 'cantrip' %}
           <hr>
+          {% endif %}
           <h3 class="mb-0 mx-auto" style="min-width: 3.5em; max-width: 3.5em">
             {% if lvl == 'cantrip' %}
             <span class="badge badge-secondary w-100">{{ lvl }}</span>
@@ -61,15 +64,24 @@
             {% set prep = char.prepared_spells|selectattr('spell_slot_level', 'equalto', lvl)|list %}
             {% for i in range(char|attr('spell_slots_'+lvl)) %}
             <div class="col-3 my-1">
-              <div class="card bg-light">
+              <div class="card bg-light slotcard">
                 <div class="card-body d-flex align-items-center py-2">
                   {% if i < prep|length %}
-                  <a class="spell-link" href="#tab-{{ prep[i].pid }}">{{ prep[i].spell.name }}</a>
-                  <button type="button" class="close ml-auto" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
+                  {% if prep[i].used %}
+                  <del>
+                    {% endif %}
+                    <a class="spell-link" href="#tab-{{ prep[i].pid }}">{{ prep[i].spell.name }}</a>
+                    {% if prep[i].used %}
+                  </del>
+                  {% endif %}
+                  <button type="button" class="close delspell ml-auto" aria-label="Close">
+                    <span data-action="{{ url_for('.unprepare', pid=prep[i].pid) }}" aria-hidden="true">&times;</span>
                   </button>
                   {% else %}
                   <span class="text-muted">&lt;empty slot&gt;</span>
+                  <button type="button" class="close addspell ml-auto" aria-label="Close">
+                    <span data-action="{{ url_for('.spellbook', level=lvl)}}" data-char="{{ char.cid }}" data-lvl="{{ lvl }}" aria-hidden="true">+</span>
+                  </button>
                   {% endif %}
                 </div>
               </div>
@@ -79,12 +91,15 @@
           <div class="tab-content">
             {% for p in prep %}
             <div id="tab-{{ p.pid }}" class="tab-pane fade hide">
-              <div class=" card mt-3">
+              <div class="card mt-3">
                 <div class="card-header d-flex align-items-center">
-                  {{ p.spell.name }}
-                  <button type="button" class="close ml-auto" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
+                  <span>{{ p.spell.name }}</span>
+                  {% if not p.used %}
+                  <button type="button" class="btn btn-primary usespell togglespell ml-auto" data-action="{{ url_for('.toggleprepare', pid=p.pid) }}">Use Spell</button>
+                  {% else %}
+                  <span class="text-muted ml-3">(This slot has already been used)</span>
+                  <button type="button" class="btn btn-secondary regainspell togglespell ml-auto" data-action="{{ url_for('.toggleprepare', pid=p.pid) }}">Regain Slot</button>
+                  {% endif %}
                 </div>
                 <div class="card-body d-flex">
                   <div class="card bg-light">

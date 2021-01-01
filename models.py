@@ -59,6 +59,7 @@ class Prepared(db.Model):
     cid = db.Column(db.Integer, db.ForeignKey("character.cid"))
     sid = db.Column(db.Integer, db.ForeignKey("spell.sid"))
     spell_slot_level = db.Column(db.String(20))
+    used = db.Column(db.Boolean, default=False)
 
     spell = db.relationship("Spell")
 

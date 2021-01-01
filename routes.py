@@ -172,6 +172,18 @@ def unprepare(pid):
         return "User not logged in", 400
 
 
+@routes.route('/char/prepare/<pid>', methods=['PUT'])
+def toggleprepare(pid):
+    if current_user.is_authenticated:
+        for p in [p for c in current_user.characters for p in c.prepared_spells if str(p.pid) == pid]:
+            p.used = not p.used
+            db.session.commit()
+            return "Succesfully toggled slots", 200
+        return "Validation error", 400
+    else:
+        return "User not logged in", 400
+
+
 @routes.route('/char/<cid>/stats', methods=['POST'])
 def stats(cid):
     if current_user.is_authenticated:
