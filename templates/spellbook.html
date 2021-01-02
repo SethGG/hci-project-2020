@@ -42,7 +42,8 @@
               <label for="charselect">Character</label>
               <select class="form-control" id="charselect">
                 {% for char in characters %}
-                <option{{ ' selected' if request.cookies.get('character') == char.cid|string }} id="char-tab-{{ char.cid }}-select" data-toggle="tab" data-target="#char-tab-{{ char.cid }}" value="{{ char.cid }}">{{ char.name }}</option>
+                <option{{ ' selected' if request.cookies.get('character') == char.cid|string }} id="char-tab-{{ char.cid }}-select" data-toggle="tab" data-target="#char-tab-{{ char.cid }}"
+                  data-link="{{ url_for('.character', username=char.owner, cid=char.cid) }}" value="{{ char.cid }}">{{ char.name }}</option>
                   {% endfor %}
               </select>
             </div>
@@ -93,6 +94,8 @@
               </div>
             </div>
             {% endfor %}
+            <hr>
+            <button type="button" class="btn btn-primary w-100" id="charpagebtn">Character Page</button>
           </div>
         </div>
       </div>

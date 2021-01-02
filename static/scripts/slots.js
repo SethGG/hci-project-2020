@@ -29,3 +29,10 @@ $("#slotscard").on("click", ".close", function(event) {
     }
   });
 });
+
+$("#slotscard").on("click", "#charpagebtn", function(event) {
+  let select = $('#charselect');
+  let selection = select.find(':selected');
+  let link = selection.data('link');
+  location.href = link;
+});
