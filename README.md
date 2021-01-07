@@ -7,9 +7,9 @@ PF2 Spellmaster is a web tool for managing a spellcaster in PF2.
 All the required python packages are listed in *requirements.txt*.
 
 These can be installed as follows:
-'''bash
+'bash
 pip3 install -r requirements.txt
-'''
+'
 
 This will install the dependencies globally on your system.
 Follow these instructions if you want to install the dependencies in a virtual environment.
