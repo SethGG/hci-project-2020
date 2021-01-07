@@ -4,13 +4,6 @@ PF2 Spellmaster is a web tool for managing a spellcaster in PF2.
 
 ## Installation
 
-Use the package manager [pip](https://pip.pypa.io/en/stable/) to install foobar.
-
-```bash
-pip install foobar
-```
-
-
 All the required python packages are listed in *requirements.txt*.
 
 These can be installed as follows:
