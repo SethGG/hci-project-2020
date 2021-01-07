@@ -13,11 +13,11 @@ pip3 install -r requirements.txt
 
 This will install the dependencies globally on your system.
 Follow these instructions if you want to install the dependencies in a virtual environment.
-`bash
+```bash
 python3 -m venv venv
 source venv/bin/activate
 pip3 install -r requirements.txt
-`
+```
 
 ## Usage
 
