@@ -23,8 +23,27 @@
               </div>
               <div class="col">
                 <div class="form-group">
+                  {{ filterform.save.label }}
+                  {{ filterform.save(class_='form-control selectpicker') }}
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-group">
                   {{ filterform.traditions.label }}
                   {{ filterform.traditions(class_='form-control selectpicker') }}
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-group">
+                  {{ filterform.school.label }}
+                  {{ filterform.school(class_='form-control selectpicker') }}
+                </div>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="col">
+                <div class="form-group">
+                  {{ render_field(filterform.name) }}
                 </div>
               </div>
               <div class="col">
@@ -39,29 +58,10 @@
                   {{ filterform.components(class_='form-control selectpicker') }}
                 </div>
               </div>
-            </div>
-            <div class="form-row">
-              <div class="col">
-                <div class="form-group">
-                  {{ render_field(filterform.name) }}
-                </div>
-              </div>
-              <div class="col">
-                <div class="form-group">
-                  {{ filterform.save.label }}
-                  {{ filterform.save(class_='form-control selectpicker') }}
-                </div>
-              </div>
-              <div class="col">
-                <div class="form-group">
-                  {{ filterform.school.label }}
-                  {{ filterform.school(class_='form-control selectpicker') }}
-                </div>
-              </div>
               <div class="col">
                 <div class="form-group">
                   {{ filterform.traits.label }}
-                  {{ filterform.traits(class_='form-control selectpicker') }}
+                  {{ filterform.traits(class_='form-control selectpicker', data_live_search='true') }}
                 </div>
               </div>
             </div>

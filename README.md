@@ -28,12 +28,12 @@ To run the app simply execute *app.py*
 python3 app.py
 ```
 
-On first run the spell database has to be build using the information at [pf2.easytool.es](https://pf2.easytool.es/spellbook/#!). This can be done by adding the *rebuild* argument.
+On first run the spell database has to be build using the information at [pf2.easytool.es](https://pf2.easytool.es/spellbook/#!). This can be done by adding the *rebuild* argument. Rebuilding takes about 5 minutes and requires a internet connection.
 
 ```bash
 python3 app.py --rebuild
 ```
 
-After running the app will be available at http://localhost:5000/.
+After running, the app will be available at http://localhost:5000/.
 
 To close the app press <kbd>Ctrl</kbd> + <kbd>C</kbd> in the terminal.

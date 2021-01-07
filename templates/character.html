@@ -95,11 +95,13 @@
               <div class="card mt-3">
                 <div class="card-header d-flex align-items-center">
                   <span>{{ p.spell.name }}</span>
+                  {% if not p.spell_slot_level == 'cantrip' %}
                   {% if not p.used %}
                   <button type="button" class="btn btn-primary usespell togglespell ml-auto" data-action="{{ url_for('.toggleprepare', pid=p.pid) }}">Use Spell</button>
                   {% else %}
                   <span class="text-muted ml-3">(This slot has already been used)</span>
                   <button type="button" class="btn btn-secondary regainspell togglespell ml-auto" data-action="{{ url_for('.toggleprepare', pid=p.pid) }}">Regain Slot</button>
+                  {% endif %}
                   {% endif %}
                 </div>
                 <div class="card-body d-flex">

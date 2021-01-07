@@ -19,8 +19,14 @@ $("#prepspells").on("click", ".spell-link", function(event) {
   }
   else {
     let prep = $(event.delegateTarget);
-    let links = prep.find('.spell-link');
-    links.removeClass('active');
+    let pref_link = prep.find('.spell-link.active');
+    if (pref_link.length > 0) {
+      let pref_tab = $(pref_link[0].hash);
+      let pref_card = pref_link.parents('.slotcard');
+      pref_tab.removeClass('show active');
+      pref_link.removeClass('active');
+      pref_card.removeClass('border-secondary');
+    }
     link.tab("show");
     card.addClass('border-secondary');
   }
