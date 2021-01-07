@@ -15,9 +15,9 @@ class SpellbookForm(FlaskForm):
     def __init__(self, *args, **kwargs):
         def custom_sort(x):
             try:
-                return [int(x[0]) + 122]
+                return [int(x) + 122]
             except ValueError:
-                return [ord(y) for y in x[0]]
+                return [ord(y) for y in x]
 
         super().__init__(*args, **kwargs)
         self.db_match = [(f[1], c[1]) for f in vars(self).items()
@@ -25,10 +25,37 @@ class SpellbookForm(FlaskForm):
         for field, column in self.db_match:
             distinct = [x[0] for x in Spell.query.with_entities(column).distinct().all()]
             if field.name == "sid" or field.name == "targets":
-                distinct = {(x, x) for x in distinct}
+                distinct = sorted({x for x in distinct}, key=custom_sort)
+                field.choices = list(zip(distinct, distinct))
+            elif field.name == "traditions":
+                names = ["Arcane", "Devine", "Occult", "Primal"]
+                distinct = sorted({x for y in distinct for x in y.split(", ")}, key=custom_sort)
+                field.choices = list(zip(distinct, names))
+            elif field.name == "actions":
+                field.choices = [("Reaction", "Reaction"), ("Single Action", "1 Action"),
+                                 ("Two-Action", "2 Actions"), ("Three-Action", "3 Actions"),
+                                 ("1 minute", "1 Minute"), ("5 minutes", "5 Minutes"),
+                                 ("10 minutes", "10 Minutes"), ("1 hour", "1 Hour")]
+            elif field.name == "components":
+                names = ["None", "Focus", "Material", "Somatic", "Verbal"]
+                distinct = sorted({x for y in distinct for x in y.split(", ")}, key=custom_sort)
+                field.choices = list(zip(distinct, names))
+            elif field.name == "save":
+                field.choices = [("-", "None"), ("Fort", "Fortitude"),
+                                 ("Ref", "Reflex"), ("Will", "Will")]
+            elif field.name == "school":
+                names = ["Abjuration", "Conjuration", "Divination", "Enchantment",
+                         "Evocation", "Illusion", "Necromancy", "Transmutation"]
+                distinct = sorted({x for y in distinct for x in y.split(", ")}, key=custom_sort)
+                field.choices = list(zip(distinct, names))
+            elif field.name == "traits":
+                distinct = sorted({x.capitalize()
+                                   for y in distinct for x in y.split(", ")}, key=custom_sort)
+                field.choices = list(zip(distinct, distinct))
+                field.choices[0] = ("-", "None")
             else:
-                distinct = {(x, x) for y in distinct for x in y.split(", ")}
-            field.choices = sorted(distinct, key=custom_sort)
+                distinct = sorted({x for y in distinct for x in y.split(", ")}, key=custom_sort)
+                field.choices = list(zip(distinct, distinct))
 
     sid = HiddenField('Spell ID')
     level = SelectMultipleField('Level')
