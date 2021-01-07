@@ -21,4 +21,4 @@ if __name__ == '__main__':
     db.create_all()
     if args.rebuild:
         rebuild()
-    app.run(host='0.0.0.0', debug=True)
+    app.run(host='0.0.0.0')

@@ -41,7 +41,6 @@ def character(username, cid):
 @routes.route('/spellbook', methods=['GET'])
 def spellbook():
     filterform = SpellbookForm(request.args, csrf_enabled=False)
-    print(filterform.school.choices)
     total_query = Spell.query
     if filterform.validate():
         for field, column in filterform.db_match:

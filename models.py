@@ -178,10 +178,11 @@ def rebuild():
             pars = height.find_all('p', class_="gris")
             for par in pars:
                 find_lvl = re.compile(r'Heightened \((.+?)\)')
-                lvl = find_lvl.match(par.strong.text).group(1)
+                match = find_lvl.match(par.strong.text)
+                lvl = match.group(1)
                 if 'heightened_' + lvl not in df:
                     df['heightened_' + lvl] = ""
-                df.at[id, 'heightened_' + lvl] = par.text
+                df.at[id, 'heightened_' + lvl] = par.text.lstrip(match.group(0))
 
     # Drop and recreate table
     Spell.__table__.drop(db.engine)

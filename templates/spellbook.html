@@ -201,7 +201,10 @@
                     <p>{{ spell.description }}</p>
                     <hr>
                     {% for h in ['plus1','plus2','plus3','2nd','3rd','4th','5th','6th','7th','8th','9th','10th'] %}
+                    {% if spell['heightened_' + h] %}
+                    <strong>Heightened ({{ h.replace('plus', '+') }})</strong>
                     <p>{{ spell['heightened_' + h] }}</p>
+                    {% endif %}
                     {% endfor %}
                   </div>
                 </div>

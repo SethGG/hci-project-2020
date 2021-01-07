@@ -52,6 +52,7 @@
           {% if lvl != 'cantrip' %}
           <hr>
           {% endif %}
+
           <h3 class="mb-0 mx-auto" style="min-width: 3.5em; max-width: 3.5em">
             {% if lvl == 'cantrip' %}
             <span class="badge badge-secondary w-100">{{ lvl }}</span>
@@ -118,7 +119,10 @@
                     <p>{{ p.spell.description }}</p>
                     <hr>
                     {% for h in ['plus1','plus2','plus3','2nd','3rd','4th','5th','6th','7th','8th','9th','10th'] %}
+                    {% if p.spell['heightened_' + h] %}
+                    <strong>Heightened ({{ h.replace('plus', '+') }})</strong>
                     <p>{{ p.spell['heightened_' + h] }}</p>
+                    {% endif %}
                     {% endfor %}
                   </div>
                 </div>
