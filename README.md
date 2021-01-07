@@ -5,7 +5,6 @@ PF2 Spellmaster is a web tool for managing a spellcaster in PF2.
 ## Installation
 
 All the required python packages are listed in *requirements.txt*.
-
 These can be installed as follows:
 
 ```bash
@@ -35,6 +34,6 @@ On first run the spell database has to be build using the information at [pf2.ea
 python3 app.py --rebuild
 ```
 
-After running the app will be available at (http://localhost:5000/).
+After running the app will be available at http://localhost:5000/.
 
 To close the app press <kbd>Ctrl</kbd> + <kbd>C</kbd> in the terminal.
